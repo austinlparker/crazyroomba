@@ -121,4 +121,11 @@ export class ThirdPersonCamera {
   resetToFollow(): void {
     this.isManualControl = false;
   }
+
+  // Get camera's horizontal angle for movement-relative input
+  getHorizontalAngle(): number {
+    // Alpha is the horizontal rotation around the target
+    // We need to return the direction the camera is facing
+    return this.camera.alpha;
+  }
 }

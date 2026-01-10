@@ -211,8 +211,16 @@ export class Game {
       y: (touchInput.cameraY || 0) + (input.cameraY || 0),
     };
 
-    // Update roomba
-    this.roomba.update(deltaTime, finalInput);
+    // Get camera angle for directional movement relative to camera view
+    const cameraAngle = this.thirdPersonCamera.getHorizontalAngle();
+
+    // Update roomba with camera-relative movement
+    this.roomba.update(deltaTime, {
+      forward: finalInput.forward,
+      strafe: finalInput.strafe,
+      cameraAngle: cameraAngle,
+      active: finalInput.active,
+    });
 
     // Update camera with input
     this.thirdPersonCamera.update(deltaTime, cameraInput);

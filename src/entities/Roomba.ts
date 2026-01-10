@@ -12,7 +12,8 @@ import { CollectedDust } from '../game/GameState';
 
 interface InputState {
   forward: number;
-  turn: number;
+  strafe: number;
+  cameraAngle?: number; // Camera's horizontal angle for relative movement
   active?: boolean;
 }
 
@@ -158,25 +159,37 @@ export class Roomba {
   }
 
   update(deltaTime: number, input: InputState): void {
-    // Update rotation based on turn input
-    this.rotation += input.turn * this.turnSpeed * deltaTime;
+    // Get camera angle for relative movement (default to 0 if not provided)
+    const cameraAngle = input.cameraAngle ?? 0;
 
-    // Calculate forward vector
-    const forward = new Vector3(
-      Math.sin(this.rotation),
-      0,
-      Math.cos(this.rotation)
-    );
+    // Calculate movement direction relative to camera
+    // Forward is away from camera, strafe is perpendicular
+    const moveX = input.strafe * Math.cos(cameraAngle) + input.forward * Math.sin(cameraAngle);
+    const moveZ = -input.strafe * Math.sin(cameraAngle) + input.forward * Math.cos(cameraAngle);
 
-    // Apply forward movement
-    const targetVelocity = forward.scale(input.forward * this.speed);
-    this.velocity = Vector3.Lerp(this.velocity, targetVelocity, 0.1);
+    // Calculate target velocity based on directional input
+    const targetVelocity = new Vector3(moveX * this.speed, 0, moveZ * this.speed);
+
+    // Smooth velocity transition
+    this.velocity = Vector3.Lerp(this.velocity, targetVelocity, 0.15);
 
     // Update physics body velocity (preserve Y for gravity)
     const currentVel = this.physicsAggregate.body.getLinearVelocity();
     this.physicsAggregate.body.setLinearVelocity(
       new Vector3(this.velocity.x, currentVel.y, this.velocity.z)
     );
+
+    // Auto-rotate to face movement direction (if moving)
+    const speed = Math.sqrt(this.velocity.x ** 2 + this.velocity.z ** 2);
+    if (speed > 0.5) {
+      const targetRotation = Math.atan2(this.velocity.x, this.velocity.z);
+      // Smooth rotation towards movement direction
+      let rotationDiff = targetRotation - this.rotation;
+      // Normalize to -PI to PI
+      while (rotationDiff > Math.PI) rotationDiff -= Math.PI * 2;
+      while (rotationDiff < -Math.PI) rotationDiff += Math.PI * 2;
+      this.rotation += rotationDiff * Math.min(1, this.turnSpeed * deltaTime * 2);
+    }
 
     // Update visual rotation (physics handles position)
     this.body.rotation.y = this.rotation;
