@@ -327,7 +327,7 @@ export class TouchControls {
 
     this.input = {
       forward: -left.y, // Left stick Y: up = forward, down = reverse
-      turn: -right.x, // Right stick X: left = turn left, right = turn right
+      turn: right.x, // Right stick X: right = turn right (positive), left = turn left (negative)
       active: this.leftStick.isActive || this.rightStick.isActive,
     };
   }

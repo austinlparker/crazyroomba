@@ -111,9 +111,9 @@ export class InputSystem {
 
     // Turn left/right (A/D or Left/Right arrows)
     if (this.isKeyPressed('a') || this.isKeyPressed('arrowleft')) {
-      turn = 1; // Turn left (positive rotation)
+      turn = -1; // Turn left (negative rotation = counter-clockwise)
     } else if (this.isKeyPressed('d') || this.isKeyPressed('arrowright')) {
-      turn = -1; // Turn right (negative rotation)
+      turn = 1; // Turn right (positive rotation = clockwise)
     }
 
     // Reset mouse deltas (not used for movement anymore)
