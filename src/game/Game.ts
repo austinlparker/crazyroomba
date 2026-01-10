@@ -120,12 +120,12 @@ export class Game {
     this.navigationGrid = new NavigationGrid(this.house);
     this.navigationGrid.generate();
 
-    // Create charging dock in living room
-    this.chargingDock = new ChargingDock(this.scene, new Vector3(-7, 0, -7));
+    // Create charging dock in living room (near center of room)
+    this.chargingDock = new ChargingDock(this.scene, new Vector3(-10, 0, -10));
     this.chargingDock.create();
 
     // Create roomba at dock position
-    this.roomba = new Roomba(this.scene, new Vector3(-7, 0.15, -5));
+    this.roomba = new Roomba(this.scene, new Vector3(-10, 0.1, -8));
     await this.roomba.create();
 
     // Set up third-person camera
@@ -262,7 +262,7 @@ export class Game {
 
   private startGame(mode: GameMode): void {
     this.gameState.reset(mode);
-    this.roomba.reset(new Vector3(-7, 0.15, -5));
+    this.roomba.reset(new Vector3(-10, 0.1, -8));
     this.dustSpawner.reset();
 
     // Spawn initial dust

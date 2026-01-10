@@ -24,9 +24,9 @@ export class ThirdPersonCamera {
       scene
     );
 
-    // Camera settings
-    this.camera.lowerRadiusLimit = 5;
-    this.camera.upperRadiusLimit = 15;
+    // Camera settings - allow zooming to see larger house
+    this.camera.lowerRadiusLimit = 3;
+    this.camera.upperRadiusLimit = 25;
     this.camera.lowerBetaLimit = Math.PI / 6; // Don't go too low
     this.camera.upperBetaLimit = Math.PI / 2.2; // Don't go directly overhead
 
