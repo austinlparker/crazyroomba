@@ -78,10 +78,10 @@ export class TouchControls {
     this.container.appendChild(rightContainer);
 
     // Labels
-    const leftLabel = this.createLabel('GAS');
+    const leftLabel = this.createLabel('STEER');
     leftContainer.appendChild(leftLabel);
 
-    const rightLabel = this.createLabel('STEER');
+    const rightLabel = this.createLabel('GAS');
     rightContainer.appendChild(rightLabel);
 
     document.body.appendChild(this.container);
@@ -326,8 +326,8 @@ export class TouchControls {
     const right = this.getJoystickValues(this.rightStick);
 
     this.input = {
-      forward: -left.y, // Left stick Y: up = forward, down = reverse
-      turn: right.x, // Right stick X: right = turn right (positive), left = turn left (negative)
+      turn: left.x, // Left stick X: rotation (left = turn left, right = turn right)
+      forward: -right.y, // Right stick Y: movement (up = forward, down = reverse)
       active: this.leftStick.isActive || this.rightStick.isActive,
     };
   }
