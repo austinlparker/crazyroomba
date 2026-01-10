@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ['claude/plan-crazy-roomba-LdAQk']
+    branches: ['main', 'claude/plan-crazy-roomba-LdAQk']
   workflow_dispatch:
 
 permissions:
