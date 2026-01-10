@@ -25,11 +25,13 @@ interface DoorwayDefinition {
 }
 
 interface ObstacleDefinition {
-  type: 'box' | 'cylinder';
+  type: 'box' | 'cylinder' | 'table' | 'chair' | 'couch' | 'bed';
   name: string;
   position: Vector3;
   size: Vector3;
   color: Color3;
+  legColor?: Color3;
+  legHeight?: number;
 }
 
 export class House {
@@ -63,47 +65,55 @@ export class House {
           { position: new Vector3(halfRoom, 0, 0), width: 1.5, direction: 'x' }, // To kitchen
         ],
         obstacles: [
-          // Couch (3-seater, ~2m x 0.9m)
+          // Couch (3-seater with legs)
           {
-            type: 'box',
+            type: 'couch',
             name: 'couch',
-            position: new Vector3(-4, 0.35, -3),
-            size: new Vector3(3, 0.7, 1.2),
+            position: new Vector3(-4, 0, -3),
+            size: new Vector3(3, 0.5, 1.2),
             color: new Color3(0.4, 0.3, 0.5),
+            legColor: new Color3(0.25, 0.2, 0.15),
+            legHeight: 0.15,
           },
-          // Coffee table
+          // Coffee table with legs
           {
-            type: 'box',
+            type: 'table',
             name: 'coffeeTable',
-            position: new Vector3(-4, 0.25, -1),
-            size: new Vector3(1.5, 0.5, 0.8),
+            position: new Vector3(-4, 0, -1),
+            size: new Vector3(1.5, 0.08, 0.8),
             color: new Color3(0.45, 0.35, 0.25),
+            legColor: new Color3(0.35, 0.25, 0.15),
+            legHeight: 0.35,
           },
-          // TV stand
+          // TV stand (low, no legs needed)
           {
             type: 'box',
             name: 'tvStand',
-            position: new Vector3(-4, 0.25, 2),
-            size: new Vector3(2, 0.5, 0.5),
+            position: new Vector3(-4, 0.2, 2),
+            size: new Vector3(2, 0.4, 0.5),
             color: new Color3(0.2, 0.2, 0.2),
           },
-          // Armchair
+          // Armchair with legs
           {
-            type: 'box',
+            type: 'chair',
             name: 'armchair',
-            position: new Vector3(-1, 0.35, -3),
-            size: new Vector3(1, 0.7, 1),
+            position: new Vector3(-1, 0, -3),
+            size: new Vector3(0.9, 0.45, 0.9),
             color: new Color3(0.45, 0.35, 0.5),
+            legColor: new Color3(0.25, 0.2, 0.15),
+            legHeight: 0.12,
           },
-          // Shoes by door
+          // Side table
           {
-            type: 'box',
-            name: 'shoes1',
-            position: new Vector3(5, 0.05, -5),
-            size: new Vector3(0.3, 0.1, 0.15),
-            color: new Color3(0.3, 0.15, 0.1),
+            type: 'table',
+            name: 'sideTable',
+            position: new Vector3(0.5, 0, -3),
+            size: new Vector3(0.5, 0.05, 0.5),
+            color: new Color3(0.5, 0.4, 0.3),
+            legColor: new Color3(0.3, 0.2, 0.15),
+            legHeight: 0.5,
           },
-          // Plant pot
+          // Plant pot (solid, no legs)
           {
             type: 'cylinder',
             name: 'plant',
@@ -124,7 +134,7 @@ export class House {
           { position: new Vector3(0, 0, halfRoom), width: 1.5, direction: 'z' }, // To bathroom
         ],
         obstacles: [
-          // Kitchen counter along wall
+          // Kitchen counter along wall (solid, floor-level)
           {
             type: 'box',
             name: 'counter1',
@@ -140,31 +150,47 @@ export class House {
             size: new Vector3(0.6, 0.9, 6),
             color: new Color3(0.7, 0.7, 0.7),
           },
-          // Kitchen island
+          // Kitchen island with legs
           {
-            type: 'box',
+            type: 'table',
             name: 'island',
-            position: new Vector3(0, 0.45, -2),
-            size: new Vector3(2, 0.9, 1.2),
+            position: new Vector3(0, 0, -2),
+            size: new Vector3(2, 0.1, 1.2),
             color: new Color3(0.65, 0.65, 0.65),
+            legColor: new Color3(0.4, 0.4, 0.4),
+            legHeight: 0.8,
           },
-          // Kitchen table
+          // Kitchen table with legs
           {
-            type: 'cylinder',
+            type: 'table',
             name: 'kitchenTable',
-            position: new Vector3(-3, 0.4, 3),
-            size: new Vector3(0.6, 0.8, 0.6),
+            position: new Vector3(-3, 0, 3),
+            size: new Vector3(1.2, 0.05, 1.2),
             color: new Color3(0.5, 0.4, 0.3),
+            legColor: new Color3(0.35, 0.25, 0.2),
+            legHeight: 0.7,
           },
           // Chair 1
           {
-            type: 'box',
+            type: 'chair',
             name: 'chair1',
-            position: new Vector3(-4, 0.25, 3),
-            size: new Vector3(0.5, 0.5, 0.5),
+            position: new Vector3(-4.2, 0, 3),
+            size: new Vector3(0.45, 0.35, 0.45),
             color: new Color3(0.4, 0.35, 0.3),
+            legColor: new Color3(0.3, 0.25, 0.2),
+            legHeight: 0.4,
           },
-          // Trash can
+          // Chair 2
+          {
+            type: 'chair',
+            name: 'chair2',
+            position: new Vector3(-1.8, 0, 3),
+            size: new Vector3(0.45, 0.35, 0.45),
+            color: new Color3(0.4, 0.35, 0.3),
+            legColor: new Color3(0.3, 0.25, 0.2),
+            legHeight: 0.4,
+          },
+          // Trash can (solid)
           {
             type: 'cylinder',
             name: 'trash',
@@ -185,23 +211,27 @@ export class House {
           { position: new Vector3(halfRoom, 0, 0), width: 1.5, direction: 'x' }, // To bathroom
         ],
         obstacles: [
-          // Bed (queen size ~1.5m x 2m)
+          // Bed with legs
           {
-            type: 'box',
+            type: 'bed',
             name: 'bed',
-            position: new Vector3(-4, 0.3, 3),
-            size: new Vector3(2, 0.6, 2.5),
+            position: new Vector3(-4, 0, 3),
+            size: new Vector3(2, 0.3, 2.5),
             color: new Color3(0.85, 0.85, 0.9),
+            legColor: new Color3(0.4, 0.3, 0.25),
+            legHeight: 0.2,
           },
-          // Nightstand
+          // Nightstand with legs
           {
-            type: 'box',
+            type: 'table',
             name: 'nightstand',
-            position: new Vector3(-2, 0.25, 4.5),
-            size: new Vector3(0.5, 0.5, 0.5),
+            position: new Vector3(-2, 0, 4.5),
+            size: new Vector3(0.5, 0.05, 0.5),
             color: new Color3(0.4, 0.35, 0.3),
+            legColor: new Color3(0.3, 0.25, 0.2),
+            legHeight: 0.45,
           },
-          // Dresser
+          // Dresser (solid, floor-level)
           {
             type: 'box',
             name: 'dresser',
@@ -209,7 +239,7 @@ export class House {
             size: new Vector3(1.8, 1, 0.6),
             color: new Color3(0.45, 0.4, 0.35),
           },
-          // Wardrobe
+          // Wardrobe (solid, floor-level)
           {
             type: 'box',
             name: 'wardrobe',
@@ -217,13 +247,25 @@ export class House {
             size: new Vector3(1.2, 2, 0.6),
             color: new Color3(0.5, 0.45, 0.4),
           },
-          // Shoes
+          // Desk with legs
           {
-            type: 'box',
-            name: 'shoes2',
-            position: new Vector3(-5, 0.05, 0),
-            size: new Vector3(0.25, 0.1, 0.15),
-            color: new Color3(0.1, 0.1, 0.15),
+            type: 'table',
+            name: 'desk',
+            position: new Vector3(4, 0, 2),
+            size: new Vector3(1.5, 0.05, 0.7),
+            color: new Color3(0.55, 0.45, 0.35),
+            legColor: new Color3(0.35, 0.25, 0.2),
+            legHeight: 0.7,
+          },
+          // Desk chair
+          {
+            type: 'chair',
+            name: 'deskChair',
+            position: new Vector3(4, 0, 1),
+            size: new Vector3(0.5, 0.3, 0.5),
+            color: new Color3(0.2, 0.2, 0.25),
+            legColor: new Color3(0.15, 0.15, 0.15),
+            legHeight: 0.35,
           },
         ],
       },
@@ -238,7 +280,7 @@ export class House {
           { position: new Vector3(0, 0, -halfRoom), width: 1.5, direction: 'z' }, // To kitchen
         ],
         obstacles: [
-          // Bathtub
+          // Bathtub (solid)
           {
             type: 'box',
             name: 'bathtub',
@@ -246,7 +288,7 @@ export class House {
             size: new Vector3(1.8, 0.7, 2.5),
             color: new Color3(0.95, 0.95, 1),
           },
-          // Toilet
+          // Toilet (solid)
           {
             type: 'box',
             name: 'toilet',
@@ -254,7 +296,7 @@ export class House {
             size: new Vector3(0.5, 0.6, 0.7),
             color: new Color3(1, 1, 1),
           },
-          // Sink cabinet
+          // Sink cabinet (solid)
           {
             type: 'box',
             name: 'sink',
@@ -262,21 +304,23 @@ export class House {
             size: new Vector3(1.2, 0.8, 0.5),
             color: new Color3(0.9, 0.9, 0.9),
           },
-          // Bath mat
-          {
-            type: 'box',
-            name: 'bathMat',
-            position: new Vector3(-2, 0.02, 4),
-            size: new Vector3(1, 0.04, 0.6),
-            color: new Color3(0.4, 0.6, 0.7),
-          },
-          // Laundry basket
+          // Laundry basket (solid)
           {
             type: 'cylinder',
             name: 'laundry',
             position: new Vector3(0, 0.35, 5),
             size: new Vector3(0.35, 0.7, 0.35),
             color: new Color3(0.6, 0.55, 0.5),
+          },
+          // Bathroom stool with legs
+          {
+            type: 'chair',
+            name: 'stool',
+            position: new Vector3(-2, 0, 1),
+            size: new Vector3(0.35, 0.08, 0.35),
+            color: new Color3(0.8, 0.8, 0.8),
+            legColor: new Color3(0.6, 0.6, 0.6),
+            legHeight: 0.35,
           },
         ],
       },
@@ -462,50 +506,411 @@ export class House {
   private createObstacles(): void {
     for (const room of this.rooms) {
       for (const obs of room.obstacles) {
-        let mesh: Mesh;
-
-        if (obs.type === 'cylinder') {
-          mesh = MeshBuilder.CreateCylinder(
-            `obstacle_${room.name}_${obs.name}`,
-            {
-              diameter: obs.size.x * 2,
-              height: obs.size.y,
-            },
-            this.scene
-          );
-        } else {
-          mesh = MeshBuilder.CreateBox(
-            `obstacle_${room.name}_${obs.name}`,
-            {
-              width: obs.size.x,
-              height: obs.size.y,
-              depth: obs.size.z,
-            },
-            this.scene
-          );
+        switch (obs.type) {
+          case 'table':
+            this.createTable(room, obs);
+            break;
+          case 'chair':
+            this.createChair(room, obs);
+            break;
+          case 'couch':
+            this.createCouch(room, obs);
+            break;
+          case 'bed':
+            this.createBed(room, obs);
+            break;
+          case 'cylinder':
+            this.createCylinder(room, obs);
+            break;
+          case 'box':
+          default:
+            this.createBox(room, obs);
+            break;
         }
-
-        // Position relative to room center
-        mesh.position = room.position.add(obs.position);
-        mesh.position.y = obs.position.y;
-
-        const material = new StandardMaterial(`obsMat_${room.name}_${obs.name}`, this.scene);
-        material.diffuseColor = obs.color;
-        material.specularColor = new Color3(0.2, 0.2, 0.2);
-        mesh.material = material;
-        mesh.receiveShadows = true;
-
-        // Add physics
-        new PhysicsAggregate(
-          mesh,
-          obs.type === 'cylinder' ? PhysicsShapeType.CYLINDER : PhysicsShapeType.BOX,
-          { mass: 0 },
-          this.scene
-        );
-
-        this.obstacleMeshes.push(mesh);
       }
     }
+  }
+
+  private createTable(room: RoomDefinition, obs: ObstacleDefinition): void {
+    const legHeight = obs.legHeight || 0.5;
+    const legThickness = 0.06;
+    const tableTopY = legHeight + obs.size.y / 2;
+
+    // Table top (visual only, no physics - roomba can go under)
+    const tableTop = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}_top`,
+      {
+        width: obs.size.x,
+        height: obs.size.y,
+        depth: obs.size.z,
+      },
+      this.scene
+    );
+
+    tableTop.position = room.position.add(obs.position);
+    tableTop.position.y = tableTopY;
+
+    const topMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_top`, this.scene);
+    topMaterial.diffuseColor = obs.color;
+    topMaterial.specularColor = new Color3(0.3, 0.3, 0.3);
+    tableTop.material = topMaterial;
+    tableTop.receiveShadows = true;
+
+    // Create 4 legs with physics
+    const legOffsetX = obs.size.x / 2 - legThickness;
+    const legOffsetZ = obs.size.z / 2 - legThickness;
+    const legPositions = [
+      new Vector3(-legOffsetX, 0, -legOffsetZ),
+      new Vector3(legOffsetX, 0, -legOffsetZ),
+      new Vector3(-legOffsetX, 0, legOffsetZ),
+      new Vector3(legOffsetX, 0, legOffsetZ),
+    ];
+
+    for (let i = 0; i < legPositions.length; i++) {
+      const leg = MeshBuilder.CreateBox(
+        `obstacle_${room.name}_${obs.name}_leg${i}`,
+        {
+          width: legThickness,
+          height: legHeight,
+          depth: legThickness,
+        },
+        this.scene
+      );
+
+      leg.position = room.position.add(obs.position).add(legPositions[i]);
+      leg.position.y = legHeight / 2;
+
+      const legMaterial = new StandardMaterial(`legMat_${room.name}_${obs.name}_${i}`, this.scene);
+      legMaterial.diffuseColor = obs.legColor || new Color3(0.3, 0.25, 0.2);
+      leg.material = legMaterial;
+
+      // Physics on legs only
+      new PhysicsAggregate(leg, PhysicsShapeType.BOX, { mass: 0 }, this.scene);
+      this.obstacleMeshes.push(leg);
+    }
+  }
+
+  private createChair(room: RoomDefinition, obs: ObstacleDefinition): void {
+    const legHeight = obs.legHeight || 0.4;
+    const legThickness = 0.04;
+    const seatY = legHeight + obs.size.y / 2;
+
+    // Seat cushion (visual only)
+    const seat = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}_seat`,
+      {
+        width: obs.size.x,
+        height: obs.size.y,
+        depth: obs.size.z,
+      },
+      this.scene
+    );
+
+    seat.position = room.position.add(obs.position);
+    seat.position.y = seatY;
+
+    const seatMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_seat`, this.scene);
+    seatMaterial.diffuseColor = obs.color;
+    seatMaterial.specularColor = new Color3(0.2, 0.2, 0.2);
+    seat.material = seatMaterial;
+    seat.receiveShadows = true;
+
+    // Chair back
+    const backHeight = obs.size.y * 1.5;
+    const back = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}_back`,
+      {
+        width: obs.size.x,
+        height: backHeight,
+        depth: 0.06,
+      },
+      this.scene
+    );
+
+    back.position = room.position.add(obs.position);
+    back.position.y = seatY + backHeight / 2;
+    back.position.z = -obs.size.z / 2 + 0.03;
+
+    const backMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_back`, this.scene);
+    backMaterial.diffuseColor = obs.color;
+    back.material = backMaterial;
+
+    // Create 4 legs with physics
+    const legOffsetX = obs.size.x / 2 - legThickness;
+    const legOffsetZ = obs.size.z / 2 - legThickness;
+    const legPositions = [
+      new Vector3(-legOffsetX, 0, -legOffsetZ),
+      new Vector3(legOffsetX, 0, -legOffsetZ),
+      new Vector3(-legOffsetX, 0, legOffsetZ),
+      new Vector3(legOffsetX, 0, legOffsetZ),
+    ];
+
+    for (let i = 0; i < legPositions.length; i++) {
+      const leg = MeshBuilder.CreateCylinder(
+        `obstacle_${room.name}_${obs.name}_leg${i}`,
+        {
+          diameter: legThickness,
+          height: legHeight,
+          tessellation: 12,
+        },
+        this.scene
+      );
+
+      leg.position = room.position.add(obs.position).add(legPositions[i]);
+      leg.position.y = legHeight / 2;
+
+      const legMaterial = new StandardMaterial(`legMat_${room.name}_${obs.name}_${i}`, this.scene);
+      legMaterial.diffuseColor = obs.legColor || new Color3(0.3, 0.25, 0.2);
+      leg.material = legMaterial;
+
+      // Physics on legs only
+      new PhysicsAggregate(leg, PhysicsShapeType.CYLINDER, { mass: 0 }, this.scene);
+      this.obstacleMeshes.push(leg);
+    }
+  }
+
+  private createCouch(room: RoomDefinition, obs: ObstacleDefinition): void {
+    const legHeight = obs.legHeight || 0.15;
+    const legThickness = 0.08;
+    const seatY = legHeight + obs.size.y / 2;
+
+    // Main couch body (visual only)
+    const body = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}_body`,
+      {
+        width: obs.size.x,
+        height: obs.size.y,
+        depth: obs.size.z,
+      },
+      this.scene
+    );
+
+    body.position = room.position.add(obs.position);
+    body.position.y = seatY;
+
+    const bodyMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_body`, this.scene);
+    bodyMaterial.diffuseColor = obs.color;
+    bodyMaterial.specularColor = new Color3(0.15, 0.15, 0.15);
+    body.material = bodyMaterial;
+    body.receiveShadows = true;
+
+    // Backrest
+    const backHeight = obs.size.y * 0.8;
+    const back = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}_back`,
+      {
+        width: obs.size.x,
+        height: backHeight,
+        depth: 0.2,
+      },
+      this.scene
+    );
+
+    back.position = room.position.add(obs.position);
+    back.position.y = seatY + obs.size.y / 2 + backHeight / 2;
+    back.position.z = -obs.size.z / 2 + 0.1;
+
+    const backMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_back`, this.scene);
+    backMaterial.diffuseColor = obs.color.scale(0.9);
+    back.material = backMaterial;
+
+    // Armrests
+    for (let side = -1; side <= 1; side += 2) {
+      const armrest = MeshBuilder.CreateBox(
+        `obstacle_${room.name}_${obs.name}_arm${side}`,
+        {
+          width: 0.15,
+          height: obs.size.y * 0.6,
+          depth: obs.size.z,
+        },
+        this.scene
+      );
+
+      armrest.position = room.position.add(obs.position);
+      armrest.position.x += side * (obs.size.x / 2 + 0.05);
+      armrest.position.y = seatY + obs.size.y * 0.2;
+
+      const armMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_arm${side}`, this.scene);
+      armMaterial.diffuseColor = obs.color.scale(0.95);
+      armrest.material = armMaterial;
+    }
+
+    // Create 4 legs with physics
+    const legOffsetX = obs.size.x / 2 - legThickness / 2;
+    const legOffsetZ = obs.size.z / 2 - legThickness / 2;
+    const legPositions = [
+      new Vector3(-legOffsetX, 0, -legOffsetZ),
+      new Vector3(legOffsetX, 0, -legOffsetZ),
+      new Vector3(-legOffsetX, 0, legOffsetZ),
+      new Vector3(legOffsetX, 0, legOffsetZ),
+    ];
+
+    for (let i = 0; i < legPositions.length; i++) {
+      const leg = MeshBuilder.CreateBox(
+        `obstacle_${room.name}_${obs.name}_leg${i}`,
+        {
+          width: legThickness,
+          height: legHeight,
+          depth: legThickness,
+        },
+        this.scene
+      );
+
+      leg.position = room.position.add(obs.position).add(legPositions[i]);
+      leg.position.y = legHeight / 2;
+
+      const legMaterial = new StandardMaterial(`legMat_${room.name}_${obs.name}_${i}`, this.scene);
+      legMaterial.diffuseColor = obs.legColor || new Color3(0.2, 0.15, 0.1);
+      leg.material = legMaterial;
+
+      // Physics on legs only
+      new PhysicsAggregate(leg, PhysicsShapeType.BOX, { mass: 0 }, this.scene);
+      this.obstacleMeshes.push(leg);
+    }
+  }
+
+  private createBed(room: RoomDefinition, obs: ObstacleDefinition): void {
+    const legHeight = obs.legHeight || 0.2;
+    const legThickness = 0.1;
+    const bedY = legHeight + obs.size.y / 2;
+
+    // Mattress
+    const mattress = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}_mattress`,
+      {
+        width: obs.size.x,
+        height: obs.size.y,
+        depth: obs.size.z,
+      },
+      this.scene
+    );
+
+    mattress.position = room.position.add(obs.position);
+    mattress.position.y = bedY;
+
+    const mattressMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_mattress`, this.scene);
+    mattressMaterial.diffuseColor = obs.color;
+    mattressMaterial.specularColor = new Color3(0.1, 0.1, 0.1);
+    mattress.material = mattressMaterial;
+    mattress.receiveShadows = true;
+
+    // Headboard
+    const headboard = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}_headboard`,
+      {
+        width: obs.size.x,
+        height: obs.size.y * 2,
+        depth: 0.1,
+      },
+      this.scene
+    );
+
+    headboard.position = room.position.add(obs.position);
+    headboard.position.y = bedY + obs.size.y;
+    headboard.position.z = obs.size.z / 2;
+
+    const headboardMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_head`, this.scene);
+    headboardMaterial.diffuseColor = obs.legColor || new Color3(0.4, 0.3, 0.25);
+    headboard.material = headboardMaterial;
+
+    // Pillow
+    const pillow = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}_pillow`,
+      {
+        width: obs.size.x * 0.7,
+        height: 0.12,
+        depth: 0.4,
+      },
+      this.scene
+    );
+
+    pillow.position = room.position.add(obs.position);
+    pillow.position.y = bedY + obs.size.y / 2 + 0.1;
+    pillow.position.z = obs.size.z / 2 - 0.3;
+
+    const pillowMaterial = new StandardMaterial(`obsMat_${room.name}_${obs.name}_pillow`, this.scene);
+    pillowMaterial.diffuseColor = new Color3(0.95, 0.95, 0.98);
+    pillow.material = pillowMaterial;
+
+    // Create 4 legs with physics (roomba can go under bed!)
+    const legOffsetX = obs.size.x / 2 - legThickness / 2;
+    const legOffsetZ = obs.size.z / 2 - legThickness / 2;
+    const legPositions = [
+      new Vector3(-legOffsetX, 0, -legOffsetZ),
+      new Vector3(legOffsetX, 0, -legOffsetZ),
+      new Vector3(-legOffsetX, 0, legOffsetZ),
+      new Vector3(legOffsetX, 0, legOffsetZ),
+    ];
+
+    for (let i = 0; i < legPositions.length; i++) {
+      const leg = MeshBuilder.CreateBox(
+        `obstacle_${room.name}_${obs.name}_leg${i}`,
+        {
+          width: legThickness,
+          height: legHeight,
+          depth: legThickness,
+        },
+        this.scene
+      );
+
+      leg.position = room.position.add(obs.position).add(legPositions[i]);
+      leg.position.y = legHeight / 2;
+
+      const legMaterial = new StandardMaterial(`legMat_${room.name}_${obs.name}_${i}`, this.scene);
+      legMaterial.diffuseColor = obs.legColor || new Color3(0.4, 0.3, 0.25);
+      leg.material = legMaterial;
+
+      // Physics on legs only
+      new PhysicsAggregate(leg, PhysicsShapeType.BOX, { mass: 0 }, this.scene);
+      this.obstacleMeshes.push(leg);
+    }
+  }
+
+  private createCylinder(room: RoomDefinition, obs: ObstacleDefinition): void {
+    const mesh = MeshBuilder.CreateCylinder(
+      `obstacle_${room.name}_${obs.name}`,
+      {
+        diameter: obs.size.x * 2,
+        height: obs.size.y,
+      },
+      this.scene
+    );
+
+    mesh.position = room.position.add(obs.position);
+    mesh.position.y = obs.position.y;
+
+    const material = new StandardMaterial(`obsMat_${room.name}_${obs.name}`, this.scene);
+    material.diffuseColor = obs.color;
+    material.specularColor = new Color3(0.2, 0.2, 0.2);
+    mesh.material = material;
+    mesh.receiveShadows = true;
+
+    new PhysicsAggregate(mesh, PhysicsShapeType.CYLINDER, { mass: 0 }, this.scene);
+    this.obstacleMeshes.push(mesh);
+  }
+
+  private createBox(room: RoomDefinition, obs: ObstacleDefinition): void {
+    const mesh = MeshBuilder.CreateBox(
+      `obstacle_${room.name}_${obs.name}`,
+      {
+        width: obs.size.x,
+        height: obs.size.y,
+        depth: obs.size.z,
+      },
+      this.scene
+    );
+
+    mesh.position = room.position.add(obs.position);
+    mesh.position.y = obs.position.y;
+
+    const material = new StandardMaterial(`obsMat_${room.name}_${obs.name}`, this.scene);
+    material.diffuseColor = obs.color;
+    material.specularColor = new Color3(0.2, 0.2, 0.2);
+    mesh.material = material;
+    mesh.receiveShadows = true;
+
+    new PhysicsAggregate(mesh, PhysicsShapeType.BOX, { mass: 0 }, this.scene);
+    this.obstacleMeshes.push(mesh);
   }
 
   getRooms(): RoomDefinition[] {

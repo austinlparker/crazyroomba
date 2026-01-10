@@ -128,6 +128,13 @@ export class Game {
     this.roomba = new Roomba(this.scene, new Vector3(-10, 0.1, -8));
     await this.roomba.create();
 
+    // Pass collidable meshes to roomba for collision detection
+    const collidableMeshes = [
+      ...this.house.getObstacleMeshes(),
+      ...this.house.getWallMeshes(),
+    ];
+    this.roomba.setCollidableMeshes(collidableMeshes);
+
     // Set up third-person camera
     this.thirdPersonCamera = new ThirdPersonCamera(this.scene, this.canvas, this.roomba);
 

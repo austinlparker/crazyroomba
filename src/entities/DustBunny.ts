@@ -21,6 +21,8 @@ export interface DustBunnyData {
 export class DustBunny {
   private scene: Scene;
   private mesh: Mesh;
+  private coreMesh: Mesh;
+  private wisps: Mesh[] = [];
   private particleSystem: ParticleSystem;
   private data: DustBunnyData;
   private bobOffset: number = 0;
@@ -29,17 +31,18 @@ export class DustBunny {
   constructor(scene: Scene, data: DustBunnyData) {
     this.scene = scene;
     this.data = data;
-    this.baseY = data.position.y + 0.2;
+    this.baseY = data.position.y + 0.15;
     this.mesh = null!;
+    this.coreMesh = null!;
     this.particleSystem = null!;
   }
 
   create(): void {
-    // Create fuzzy dust bunny (icosphere for irregular look)
+    // Create the main dust bunny body - a fuzzy irregular sphere
     this.mesh = MeshBuilder.CreateIcoSphere(
       `dustBunny_${this.data.id}`,
       {
-        radius: 0.2,
+        radius: 0.15,
         subdivisions: 1,
       },
       this.scene
@@ -48,26 +51,31 @@ export class DustBunny {
     this.mesh.position = this.data.position.clone();
     this.mesh.position.y = this.baseY;
 
-    // Material - gray fuzzy appearance
-    const material = new StandardMaterial(`dustMat_${this.data.id}`, this.scene);
+    // Get colors based on value
+    const { mainColor, emissiveColor } = this.getColors();
 
-    // Color based on value (higher value = darker/rarer dust)
-    if (this.data.pointValue >= 1000) {
-      material.diffuseColor = new Color3(0.2, 0.15, 0.25); // Purple-ish rare dust
-      material.emissiveColor = new Color3(0.1, 0.05, 0.15);
-    } else if (this.data.pointValue >= 500) {
-      material.diffuseColor = new Color3(0.3, 0.25, 0.2); // Brown dust
-      material.emissiveColor = new Color3(0.05, 0.04, 0.03);
-    } else if (this.data.pointValue >= 250) {
-      material.diffuseColor = new Color3(0.5, 0.5, 0.45); // Gray dust
-      material.emissiveColor = new Color3(0.05, 0.05, 0.04);
-    } else {
-      material.diffuseColor = new Color3(0.65, 0.65, 0.6); // Light gray dust
-      material.emissiveColor = new Color3(0.05, 0.05, 0.05);
-    }
+    const mainMaterial = new StandardMaterial(`dustMat_${this.data.id}`, this.scene);
+    mainMaterial.diffuseColor = mainColor;
+    mainMaterial.emissiveColor = emissiveColor;
+    mainMaterial.specularColor = new Color3(0.05, 0.05, 0.05);
+    this.mesh.material = mainMaterial;
 
-    material.specularColor = new Color3(0.1, 0.1, 0.1);
-    this.mesh.material = material;
+    // Create inner core (slightly darker)
+    this.coreMesh = MeshBuilder.CreateSphere(
+      `dustCore_${this.data.id}`,
+      { diameter: 0.12, segments: 8 },
+      this.scene
+    );
+    this.coreMesh.parent = this.mesh;
+    this.coreMesh.position = Vector3.Zero();
+
+    const coreMaterial = new StandardMaterial(`coreMat_${this.data.id}`, this.scene);
+    coreMaterial.diffuseColor = mainColor.scale(0.7);
+    coreMaterial.alpha = 0.6;
+    this.coreMesh.material = coreMaterial;
+
+    // Create wispy strands radiating outward (hair-like appearance)
+    this.createWisps(mainColor);
 
     // Add subtle particle effect
     this.createParticles();
@@ -76,10 +84,85 @@ export class DustBunny {
     this.bobOffset = Math.random() * Math.PI * 2;
   }
 
+  private getColors(): { mainColor: Color3; emissiveColor: Color3 } {
+    // Color based on value (higher value = rarer, more distinctive dust)
+    if (this.data.pointValue >= 1000) {
+      // Rare dust - purple/grey with shimmer
+      return {
+        mainColor: new Color3(0.35, 0.28, 0.4),
+        emissiveColor: new Color3(0.15, 0.08, 0.2),
+      };
+    } else if (this.data.pointValue >= 500) {
+      // Far dust - brown/tan
+      return {
+        mainColor: new Color3(0.45, 0.38, 0.3),
+        emissiveColor: new Color3(0.08, 0.06, 0.04),
+      };
+    } else if (this.data.pointValue >= 250) {
+      // Medium dust - grey
+      return {
+        mainColor: new Color3(0.55, 0.55, 0.5),
+        emissiveColor: new Color3(0.06, 0.06, 0.05),
+      };
+    } else {
+      // Common dust - light grey
+      return {
+        mainColor: new Color3(0.7, 0.7, 0.65),
+        emissiveColor: new Color3(0.08, 0.08, 0.07),
+      };
+    }
+  }
+
+  private createWisps(baseColor: Color3): void {
+    const wispCount = 8;
+
+    for (let i = 0; i < wispCount; i++) {
+      // Random direction for each wisp
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.random() * Math.PI;
+
+      const direction = new Vector3(
+        Math.sin(phi) * Math.cos(theta),
+        Math.sin(phi) * Math.sin(theta),
+        Math.cos(phi)
+      );
+
+      // Create a thin elongated box as a wisp
+      const wispLength = 0.08 + Math.random() * 0.06;
+      const wispThickness = 0.01 + Math.random() * 0.01;
+
+      const wisp = MeshBuilder.CreateBox(
+        `wisp_${this.data.id}_${i}`,
+        {
+          width: wispThickness,
+          height: wispLength,
+          depth: wispThickness,
+        },
+        this.scene
+      );
+
+      // Position at surface of main sphere, pointing outward
+      wisp.position = direction.scale(0.12);
+
+      // Orient to point outward
+      wisp.lookAt(direction.scale(2));
+      wisp.rotation.x += Math.PI / 2;
+
+      wisp.parent = this.mesh;
+
+      const wispMaterial = new StandardMaterial(`wispMat_${this.data.id}_${i}`, this.scene);
+      wispMaterial.diffuseColor = baseColor.scale(0.8 + Math.random() * 0.4);
+      wispMaterial.alpha = 0.7;
+      wisp.material = wispMaterial;
+
+      this.wisps.push(wisp);
+    }
+  }
+
   private createParticles(): void {
     this.particleSystem = new ParticleSystem(
       `dustParticles_${this.data.id}`,
-      20,
+      30,
       this.scene
     );
 
@@ -90,39 +173,47 @@ export class DustBunny {
     );
 
     this.particleSystem.emitter = this.mesh;
-    this.particleSystem.minEmitBox = new Vector3(-0.1, -0.1, -0.1);
-    this.particleSystem.maxEmitBox = new Vector3(0.1, 0.1, 0.1);
+    this.particleSystem.minEmitBox = new Vector3(-0.08, -0.08, -0.08);
+    this.particleSystem.maxEmitBox = new Vector3(0.08, 0.08, 0.08);
 
-    this.particleSystem.color1 = new Color4(0.7, 0.7, 0.65, 0.3);
-    this.particleSystem.color2 = new Color4(0.5, 0.5, 0.48, 0.2);
-    this.particleSystem.colorDead = new Color4(0.4, 0.4, 0.38, 0);
+    this.particleSystem.color1 = new Color4(0.75, 0.72, 0.68, 0.25);
+    this.particleSystem.color2 = new Color4(0.6, 0.58, 0.55, 0.15);
+    this.particleSystem.colorDead = new Color4(0.5, 0.48, 0.45, 0);
 
-    this.particleSystem.minSize = 0.02;
-    this.particleSystem.maxSize = 0.06;
+    this.particleSystem.minSize = 0.015;
+    this.particleSystem.maxSize = 0.04;
 
-    this.particleSystem.minLifeTime = 0.5;
-    this.particleSystem.maxLifeTime = 1.5;
+    this.particleSystem.minLifeTime = 0.8;
+    this.particleSystem.maxLifeTime = 2.0;
 
-    this.particleSystem.emitRate = 5;
+    this.particleSystem.emitRate = 8;
 
-    this.particleSystem.gravity = new Vector3(0, 0.02, 0);
+    this.particleSystem.gravity = new Vector3(0, 0.01, 0);
 
-    this.particleSystem.direction1 = new Vector3(-0.5, 0.5, -0.5);
-    this.particleSystem.direction2 = new Vector3(0.5, 1, 0.5);
+    this.particleSystem.direction1 = new Vector3(-0.3, 0.3, -0.3);
+    this.particleSystem.direction2 = new Vector3(0.3, 0.8, 0.3);
 
-    this.particleSystem.minEmitPower = 0.05;
-    this.particleSystem.maxEmitPower = 0.1;
+    this.particleSystem.minEmitPower = 0.02;
+    this.particleSystem.maxEmitPower = 0.06;
 
     this.particleSystem.start();
   }
 
   update(deltaTime: number): void {
     // Gentle bobbing animation
-    this.bobOffset += deltaTime * 2;
-    this.mesh.position.y = this.baseY + Math.sin(this.bobOffset) * 0.05;
+    this.bobOffset += deltaTime * 1.5;
+    this.mesh.position.y = this.baseY + Math.sin(this.bobOffset) * 0.04;
 
-    // Slow rotation
-    this.mesh.rotation.y += deltaTime * 0.5;
+    // Slow tumbling rotation
+    this.mesh.rotation.y += deltaTime * 0.4;
+    this.mesh.rotation.x += deltaTime * 0.15;
+
+    // Animate wisps slightly
+    for (let i = 0; i < this.wisps.length; i++) {
+      const wisp = this.wisps[i];
+      const waveOffset = this.bobOffset + i * 0.5;
+      wisp.scaling.y = 1 + Math.sin(waveOffset * 2) * 0.15;
+    }
   }
 
   getData(): DustBunnyData {
@@ -136,6 +227,10 @@ export class DustBunny {
   dispose(): void {
     this.particleSystem.stop();
     this.particleSystem.dispose();
+    for (const wisp of this.wisps) {
+      wisp.dispose();
+    }
+    this.coreMesh.dispose();
     this.mesh.dispose();
   }
 }
