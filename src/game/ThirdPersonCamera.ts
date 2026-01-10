@@ -30,6 +30,11 @@ export class ThirdPersonCamera {
     this.camera.lowerBetaLimit = Math.PI / 6; // Don't go too low
     this.camera.upperBetaLimit = Math.PI / 2.2; // Don't go directly overhead
 
+    // Enable camera collision detection
+    this.camera.checkCollisions = true;
+    this.camera.collisionRadius = new Vector3(0.5, 0.5, 0.5);
+    scene.collisionsEnabled = true;
+
     // Disable default controls - we'll handle following manually
     this.camera.attachControl(canvas, false);
 

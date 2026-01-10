@@ -284,9 +284,22 @@ export class House {
   }
 
   create(): void {
+    this.createGroundPlane();
     this.createFloors();
     this.createWalls();
     this.createObstacles();
+  }
+
+  private createGroundPlane(): void {
+    // Large invisible ground plane as physics backup
+    const ground = MeshBuilder.CreateGround(
+      'groundPlane',
+      { width: 50, height: 50 },
+      this.scene
+    );
+    ground.position.y = -0.1; // Slightly below floor level
+    ground.isVisible = false;
+    new PhysicsAggregate(ground, PhysicsShapeType.BOX, { mass: 0 }, this.scene);
   }
 
   private createFloors(): void {
@@ -309,6 +322,9 @@ export class House {
       material.specularColor = new Color3(0.1, 0.1, 0.1);
       floor.material = material;
       floor.receiveShadows = true;
+
+      // Add physics to floor so roomba doesn't fall through
+      new PhysicsAggregate(floor, PhysicsShapeType.BOX, { mass: 0 }, this.scene);
 
       this.floorMeshes.push(floor);
     }
@@ -433,6 +449,9 @@ export class House {
     material.diffuseColor = new Color3(0.85, 0.85, 0.8);
     material.specularColor = new Color3(0.1, 0.1, 0.1);
     wall.material = material;
+
+    // Enable collision detection for camera
+    wall.checkCollisions = true;
 
     // Add physics
     new PhysicsAggregate(wall, PhysicsShapeType.BOX, { mass: 0 }, this.scene);
