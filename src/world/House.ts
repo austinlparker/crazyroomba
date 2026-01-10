@@ -151,7 +151,7 @@ export class House {
       // Bedroom (top-left)
       {
         name: 'bedroom',
-        position: new Vector3(-halfRoom, 0, halfRoom + roomSize),
+        position: new Vector3(-halfRoom, 0, halfRoom),
         size: new Vector3(roomSize, 0.1, roomSize),
         floorColor: new Color3(0.6, 0.65, 0.75), // Soft blue carpet
         doorways: [
@@ -196,7 +196,7 @@ export class House {
       // Bathroom (top-right)
       {
         name: 'bathroom',
-        position: new Vector3(halfRoom, 0, halfRoom + roomSize),
+        position: new Vector3(halfRoom, 0, halfRoom),
         size: new Vector3(roomSize, 0.1, roomSize),
         floorColor: new Color3(0.95, 0.95, 0.95), // White tile
         doorways: [
@@ -462,7 +462,7 @@ export class House {
   getBounds(): { min: Vector3; max: Vector3 } {
     return {
       min: new Vector3(-10, 0, -10),
-      max: new Vector3(10, 3, 20),
+      max: new Vector3(10, 3, 10),
     };
   }
 }

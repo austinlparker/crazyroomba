@@ -92,17 +92,29 @@ export class Game {
   }
 
   async initialize(): Promise<void> {
-    // Initialize physics
-    const havokInstance = await HavokPhysics();
-    const havokPlugin = new HavokPlugin(true, havokInstance);
-    this.scene.enablePhysics(new Vector3(0, -9.81, 0), havokPlugin);
+    console.log('Initializing physics...');
+
+    // Initialize physics with error handling
+    try {
+      const havokInstance = await HavokPhysics();
+      console.log('Havok WASM loaded successfully');
+      const havokPlugin = new HavokPlugin(true, havokInstance);
+      this.scene.enablePhysics(new Vector3(0, -9.81, 0), havokPlugin);
+      console.log('Physics enabled');
+    } catch (error) {
+      console.error('Failed to initialize Havok physics:', error);
+      throw new Error(`Physics initialization failed: ${error}`);
+    }
 
     // Set up lighting
+    console.log('Setting up lighting...');
     this.setupLighting();
 
     // Create world
+    console.log('Creating house...');
     this.house = new House(this.scene);
     this.house.create();
+    console.log('House created');
 
     // Generate navigation grid based on house layout
     this.navigationGrid = new NavigationGrid(this.house);
