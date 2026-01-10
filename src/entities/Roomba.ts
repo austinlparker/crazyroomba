@@ -25,8 +25,18 @@ export class Roomba {
   private sideBrush: Mesh;
   private physicsAggregate: PhysicsAggregate;
 
-  private speed: number = 8;
-  private turnSpeed: number = 3;
+  // Car-style physics constants
+  private maxSpeed: number = 8;
+  private maxReverseSpeed: number = 4;        // Half of forward speed
+  private acceleration: number = 12;
+  private deceleration: number = 8;
+  private friction: number = 4;               // Speed reduction when no input
+  private turnRate: number = 2.5;             // Base turn rate
+  private minSpeedForTurn: number = 0.5;      // Minimum speed needed to turn
+  private maxTurnAtSpeed: number = 4;         // Speed at which max turn rate is achieved
+
+  // Car-style state
+  private currentSpeed: number = 0;           // Current forward speed (can be negative)
   private rotation: number = 0;
   private velocity: Vector3 = Vector3.Zero();
 
@@ -360,8 +370,44 @@ export class Roomba {
 
     // Only respond to input if not stunned
     if (!this.isStunned) {
-      // Update rotation based on turn input (steering)
-      this.rotation += input.turn * this.turnSpeed * deltaTime;
+      // Car-style physics: acceleration/deceleration
+      if (input.forward > 0) {
+        // Accelerate forward
+        this.currentSpeed += this.acceleration * input.forward * deltaTime;
+      } else if (input.forward < 0) {
+        // Brake/reverse
+        this.currentSpeed += this.deceleration * input.forward * deltaTime;
+      } else {
+        // Apply friction when no input
+        if (Math.abs(this.currentSpeed) > 0.01) {
+          const frictionForce = this.friction * deltaTime;
+          if (this.currentSpeed > 0) {
+            this.currentSpeed = Math.max(0, this.currentSpeed - frictionForce);
+          } else {
+            this.currentSpeed = Math.min(0, this.currentSpeed + frictionForce);
+          }
+        } else {
+          this.currentSpeed = 0;
+        }
+      }
+
+      // Clamp speed
+      this.currentSpeed = Math.max(-this.maxReverseSpeed, Math.min(this.maxSpeed, this.currentSpeed));
+
+      // Car-style steering: only turn when moving
+      const absSpeed = Math.abs(this.currentSpeed);
+      if (absSpeed >= this.minSpeedForTurn && input.turn !== 0) {
+        // Turn rate increases with speed up to a point, then stays constant
+        const speedFactor = Math.min(absSpeed / this.maxTurnAtSpeed, 1);
+        const turnAmount = input.turn * this.turnRate * speedFactor * deltaTime;
+
+        // Reverse steering when going backwards (like a real car)
+        if (this.currentSpeed < 0) {
+          this.rotation -= turnAmount;
+        } else {
+          this.rotation += turnAmount;
+        }
+      }
 
       // Calculate forward vector based on current rotation
       const forward = new Vector3(
@@ -370,9 +416,8 @@ export class Roomba {
         Math.cos(this.rotation)
       );
 
-      // Apply forward movement (throttle)
-      const targetVelocity = forward.scale(input.forward * this.speed);
-      this.velocity = Vector3.Lerp(this.velocity, targetVelocity, 0.1);
+      // Apply movement based on current speed
+      this.velocity = forward.scale(this.currentSpeed);
 
       // Update physics body velocity (preserve Y for gravity)
       const currentVel = this.physicsAggregate.body.getLinearVelocity();
@@ -441,8 +486,9 @@ export class Roomba {
 
     this.physicsAggregate.body.setLinearVelocity(bounceVelocity);
 
-    // Clear player velocity so they don't immediately resume motion
+    // Clear player velocity and speed so they don't immediately resume motion
     this.velocity = Vector3.Zero();
+    this.currentSpeed = 0;
   }
 
   private updateBinBar(): void {
@@ -533,6 +579,7 @@ export class Roomba {
   reset(position: Vector3): void {
     this.body.position = position.clone();
     this.rotation = 0;
+    this.currentSpeed = 0;
     this.velocity = Vector3.Zero();
     this.binContents = [];
     this.isStunned = false;
