@@ -1,8 +1,8 @@
 import { Scene, KeyboardEventTypes } from '@babylonjs/core';
 
 export interface InputState {
-  forward: number; // -1 to 1
-  turn: number; // -1 to 1
+  forward: number; // -1 to 1 (relative to camera: forward/back)
+  strafe: number; // -1 to 1 (relative to camera: left/right)
   cameraX: number; // -1 to 1 (horizontal rotation)
   cameraY: number; // -1 to 1 (zoom/tilt)
   pause: boolean;
@@ -102,22 +102,22 @@ export class InputSystem {
 
   getInput(): InputState {
     let forward = 0;
-    let turn = 0;
+    let strafe = 0;
     let cameraX = 0;
     let cameraY = 0;
 
-    // Forward/backward
+    // Forward/backward (W/S or Up/Down arrows)
     if (this.isKeyPressed('w') || this.isKeyPressed('arrowup')) {
       forward = 1;
     } else if (this.isKeyPressed('s') || this.isKeyPressed('arrowdown')) {
       forward = -1;
     }
 
-    // Left/right turn
+    // Strafe left/right (A/D or Left/Right arrows)
     if (this.isKeyPressed('a') || this.isKeyPressed('arrowleft')) {
-      turn = 1;
+      strafe = -1;
     } else if (this.isKeyPressed('d') || this.isKeyPressed('arrowright')) {
-      turn = -1;
+      strafe = 1;
     }
 
     // Camera rotation with Q/E keys
@@ -142,11 +142,11 @@ export class InputSystem {
 
     return {
       forward,
-      turn,
+      strafe,
       cameraX,
       cameraY,
       pause,
-      active: forward !== 0 || turn !== 0,
+      active: forward !== 0 || strafe !== 0,
     };
   }
 

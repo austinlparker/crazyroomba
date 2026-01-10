@@ -1,6 +1,6 @@
 export interface TouchInput {
   forward: number;
-  turn: number;
+  strafe: number;
   cameraX: number; // Camera horizontal rotation
   cameraY: number; // Camera vertical (zoom/tilt)
   active: boolean;
@@ -26,7 +26,7 @@ export class TouchControls {
 
   private input: TouchInput = {
     forward: 0,
-    turn: 0,
+    strafe: 0,
     cameraX: 0,
     cameraY: 0,
     active: false,
@@ -105,32 +105,39 @@ export class TouchControls {
   }
 
   private createJoystick(container: HTMLDivElement): Joystick {
-    // Outer ring
+    // Outer ring - arcade style
     const outer = document.createElement('div');
     outer.style.cssText = `
       position: absolute;
       width: 120px;
       height: 120px;
-      border: 3px solid rgba(255,255,255,0.4);
+      border: 4px solid #00ffff;
       border-radius: 50%;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.7);
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
+      box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.4),
+        inset 0 0 30px rgba(0, 255, 255, 0.1);
     `;
 
-    // Inner stick
+    // Inner stick - neon arcade style
     const inner = document.createElement('div');
     inner.style.cssText = `
       position: absolute;
       width: 50px;
       height: 50px;
-      background: rgba(78, 204, 163, 0.8);
+      background: radial-gradient(circle at 30% 30%, #00ff66, #00aa44);
+      border: 3px solid #00ff66;
       border-radius: 50%;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       transition: none;
+      box-shadow:
+        0 0 15px rgba(0, 255, 102, 0.6),
+        inset 0 0 10px rgba(255, 255, 255, 0.3);
     `;
 
     outer.appendChild(inner);
@@ -153,14 +160,15 @@ export class TouchControls {
     label.textContent = text;
     label.style.cssText = `
       position: absolute;
-      bottom: -25px;
+      bottom: -30px;
       left: 50%;
       transform: translateX(-50%);
-      color: rgba(255,255,255,0.5);
-      font-size: 12px;
-      font-family: monospace;
+      color: #00ffff;
+      font-size: 10px;
+      font-family: 'Press Start 2P', cursive;
       text-transform: uppercase;
       letter-spacing: 2px;
+      text-shadow: 0 0 10px #00ffff;
     `;
     return label;
   }
@@ -322,8 +330,8 @@ export class TouchControls {
     const right = this.getJoystickValues(this.rightStick);
 
     this.input = {
-      forward: -left.y, // Negative because Y is inverted
-      turn: -left.x, // Negative for correct turn direction
+      forward: -left.y, // Negative because Y is inverted (up = forward)
+      strafe: left.x, // Positive = right, negative = left
       cameraX: right.x, // Camera horizontal
       cameraY: -right.y, // Camera vertical (inverted)
       active: this.leftStick.isActive || this.rightStick.isActive,
@@ -345,7 +353,7 @@ export class TouchControls {
     this.container.style.display = 'none';
     this.resetJoystick(this.leftStick);
     this.resetJoystick(this.rightStick);
-    this.input = { forward: 0, turn: 0, cameraX: 0, cameraY: 0, active: false };
+    this.input = { forward: 0, strafe: 0, cameraX: 0, cameraY: 0, active: false };
   }
 
   isVisible(): boolean {
