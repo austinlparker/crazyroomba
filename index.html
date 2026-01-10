@@ -4,21 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Crazy Roomba</title>
-    <!-- Arcade-style pixel font -->
+    <!-- 2000s extreme style fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Russo+One&display=swap" rel="stylesheet">
     <style>
       :root {
-        --arcade-yellow: #ffcc00;
-        --arcade-cyan: #00ffff;
-        --arcade-magenta: #ff00ff;
-        --arcade-green: #00ff66;
-        --arcade-red: #ff3366;
-        --arcade-blue: #3366ff;
-        --arcade-orange: #ff9933;
-        --arcade-bg: #0a0a12;
-        --arcade-panel: #1a1a2e;
+        --extreme-orange: #ff6600;
+        --extreme-yellow: #ffcc00;
+        --extreme-lime: #99ff00;
+        --extreme-cyan: #00ccff;
+        --extreme-pink: #ff0099;
+        --extreme-red: #ff0033;
+        --extreme-blue: #0066ff;
+        --extreme-dark: #0d0d1a;
+        --extreme-panel: #1a1a2e;
       }
 
       * {
@@ -32,8 +32,8 @@
         height: 100%;
         overflow: hidden;
         touch-action: none;
-        font-family: 'Press Start 2P', cursive;
-        background: var(--arcade-bg);
+        font-family: 'Russo One', 'Impact', 'Arial Black', sans-serif;
+        background: var(--extreme-dark);
       }
 
       #game-canvas {
@@ -53,79 +53,73 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: var(--arcade-bg);
+        background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 50%, #0d0d1a 100%);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         color: white;
-        font-family: 'Press Start 2P', cursive;
+        font-family: 'Bebas Neue', 'Impact', sans-serif;
         z-index: 100;
       }
 
       #loading h1 {
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
-        color: var(--arcade-cyan);
-        text-shadow:
-          0 0 10px var(--arcade-cyan),
-          0 0 20px var(--arcade-cyan),
-          0 0 40px var(--arcade-cyan);
-        animation: neonPulse 1.5s ease-in-out infinite;
+        font-size: 4rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(180deg, #ffcc00 0%, #ff6600 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        filter: drop-shadow(0 0 20px rgba(255, 102, 0, 0.5));
       }
 
       #loading p {
-        font-size: 0.75rem;
-        color: var(--arcade-yellow);
-        text-shadow: 0 0 5px var(--arcade-yellow);
+        font-size: 1.2rem;
+        color: #00ccff;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-family: 'Russo One', sans-serif;
       }
 
       .spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(0, 255, 255, 0.2);
-        border-top-color: var(--arcade-cyan);
+        width: 60px;
+        height: 60px;
+        border: 6px solid rgba(255, 102, 0, 0.2);
+        border-top-color: var(--extreme-orange);
+        border-right-color: var(--extreme-yellow);
         border-radius: 50%;
-        animation: spin 1s linear infinite;
+        animation: spin 0.8s linear infinite;
         margin-top: 2rem;
-        box-shadow: 0 0 15px var(--arcade-cyan);
       }
 
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
 
-      @keyframes neonPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
-      }
-
-      @keyframes scanline {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(100vh); }
-      }
-
-      /* CRT scanline effect overlay */
-      .crt-overlay {
+      /* Speed lines background effect */
+      .speed-lines {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         pointer-events: none;
-        z-index: 9999;
+        z-index: 9998;
+        opacity: 0.03;
         background: repeating-linear-gradient(
-          0deg,
-          rgba(0, 0, 0, 0.15),
-          rgba(0, 0, 0, 0.15) 1px,
-          transparent 1px,
-          transparent 2px
+          90deg,
+          transparent,
+          transparent 20px,
+          rgba(255, 102, 0, 0.5) 20px,
+          rgba(255, 102, 0, 0.5) 21px
         );
       }
     </style>
   </head>
   <body>
-    <div class="crt-overlay"></div>
+    <div class="speed-lines"></div>
     <div id="loading">
       <h1>CRAZY ROOMBA</h1>
       <p>Loading...</p>

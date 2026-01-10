@@ -1,8 +1,6 @@
 export interface TouchInput {
-  forward: number;
-  strafe: number;
-  cameraX: number; // Camera horizontal rotation
-  cameraY: number; // Camera vertical (zoom/tilt)
+  forward: number; // Left stick Y: throttle
+  turn: number; // Right stick X: steering
   active: boolean;
 }
 
@@ -26,9 +24,7 @@ export class TouchControls {
 
   private input: TouchInput = {
     forward: 0,
-    strafe: 0,
-    cameraX: 0,
-    cameraY: 0,
+    turn: 0,
     active: false,
   };
 
@@ -75,17 +71,17 @@ export class TouchControls {
     this.leftStick = this.createJoystick(leftContainer);
     this.container.appendChild(leftContainer);
 
-    // Right joystick (camera)
+    // Right joystick (steering)
     const rightContainer = this.createJoystickContainer('right');
     rightContainer.style.right = '30px';
     this.rightStick = this.createJoystick(rightContainer);
     this.container.appendChild(rightContainer);
 
     // Labels
-    const leftLabel = this.createLabel('MOVE');
+    const leftLabel = this.createLabel('GAS');
     leftContainer.appendChild(leftLabel);
 
-    const rightLabel = this.createLabel('CAMERA');
+    const rightLabel = this.createLabel('STEER');
     rightContainer.appendChild(rightLabel);
 
     document.body.appendChild(this.container);
@@ -105,39 +101,39 @@ export class TouchControls {
   }
 
   private createJoystick(container: HTMLDivElement): Joystick {
-    // Outer ring - arcade style
+    // Outer ring - extreme style
     const outer = document.createElement('div');
     outer.style.cssText = `
       position: absolute;
       width: 120px;
       height: 120px;
-      border: 4px solid #00ffff;
+      border: 5px solid #ff6600;
       border-radius: 50%;
-      background: rgba(0,0,0,0.7);
+      background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,15,0,0.8) 100%);
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       box-shadow:
-        0 0 20px rgba(0, 255, 255, 0.4),
-        inset 0 0 30px rgba(0, 255, 255, 0.1);
+        4px 4px 0px #000,
+        inset 0 0 20px rgba(255, 102, 0, 0.2);
     `;
 
-    // Inner stick - neon arcade style
+    // Inner stick - extreme gradient style
     const inner = document.createElement('div');
     inner.style.cssText = `
       position: absolute;
       width: 50px;
       height: 50px;
-      background: radial-gradient(circle at 30% 30%, #00ff66, #00aa44);
-      border: 3px solid #00ff66;
+      background: linear-gradient(135deg, #99ff00 0%, #66cc00 100%);
+      border: 4px solid #99ff00;
       border-radius: 50%;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       transition: none;
       box-shadow:
-        0 0 15px rgba(0, 255, 102, 0.6),
-        inset 0 0 10px rgba(255, 255, 255, 0.3);
+        3px 3px 0px #000,
+        inset 0 -5px 15px rgba(0, 0, 0, 0.3);
     `;
 
     outer.appendChild(inner);
@@ -163,12 +159,12 @@ export class TouchControls {
       bottom: -30px;
       left: 50%;
       transform: translateX(-50%);
-      color: #00ffff;
-      font-size: 10px;
-      font-family: 'Press Start 2P', cursive;
+      color: #ff6600;
+      font-size: 12px;
+      font-family: 'Russo One', 'Impact', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      text-shadow: 0 0 10px #00ffff;
+      letter-spacing: 3px;
+      text-shadow: 2px 2px 0px #000;
     `;
     return label;
   }
@@ -330,10 +326,8 @@ export class TouchControls {
     const right = this.getJoystickValues(this.rightStick);
 
     this.input = {
-      forward: -left.y, // Negative because Y is inverted (up = forward)
-      strafe: left.x, // Positive = right, negative = left
-      cameraX: right.x, // Camera horizontal
-      cameraY: -right.y, // Camera vertical (inverted)
+      forward: -left.y, // Left stick Y: up = forward, down = reverse
+      turn: right.x, // Right stick X: right = turn right (positive), left = turn left (negative)
       active: this.leftStick.isActive || this.rightStick.isActive,
     };
   }
@@ -353,7 +347,7 @@ export class TouchControls {
     this.container.style.display = 'none';
     this.resetJoystick(this.leftStick);
     this.resetJoystick(this.rightStick);
-    this.input = { forward: 0, strafe: 0, cameraX: 0, cameraY: 0, active: false };
+    this.input = { forward: 0, turn: 0, active: false };
   }
 
   isVisible(): boolean {

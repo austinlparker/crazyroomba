@@ -59,46 +59,29 @@ export class Leaderboard {
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a12 100%);
+      background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 30%, #0a1a2e 70%, #0d0d1a 100%);
       display: none;
       flex-direction: column;
       align-items: center;
       padding: 40px 20px;
       z-index: 25;
       overflow-y: auto;
-      font-family: 'Press Start 2P', cursive;
+      font-family: 'Russo One', 'Impact', sans-serif;
     `;
 
-    // Arcade frame
-    const frame = document.createElement('div');
-    frame.style.cssText = `
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      border: 4px solid #ffcc00;
-      border-radius: 8px;
-      box-shadow:
-        0 0 20px rgba(255, 204, 0, 0.3),
-        inset 0 0 60px rgba(0, 0, 0, 0.5);
-      pointer-events: none;
-    `;
-    container.appendChild(frame);
-
-    // Title with arcade marquee style
+    // Title
     const title = document.createElement('h1');
     title.textContent = 'HIGH SCORES';
     title.style.cssText = `
-      color: #ffcc00;
-      font-size: 1.8rem;
-      font-weight: bold;
+      font-family: 'Bebas Neue', 'Impact', sans-serif;
+      font-size: 3.5rem;
+      background: linear-gradient(180deg, #ffcc00 0%, #ff6600 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 1.5rem;
-      text-shadow:
-        0 0 10px #ffcc00,
-        0 0 20px #ffcc00,
-        0 0 40px #ffcc00;
-      letter-spacing: 3px;
+      filter: drop-shadow(3px 3px 0px #000);
+      letter-spacing: 6px;
     `;
 
     // Mode tabs
@@ -109,24 +92,22 @@ export class Leaderboard {
       margin-bottom: 1.5rem;
     `;
 
-    const timeAttackTab = this.createTab('TIME ATTACK', GameMode.TimeAttack);
-    const endlessTab = this.createTab('ENDLESS', GameMode.Endless);
+    const timeAttackTab = this.createTab('TIME ATTACK', GameMode.TimeAttack, ['#ff6600', '#ffcc00']);
+    const endlessTab = this.createTab('ENDLESS', GameMode.Endless, ['#00ccff', '#0066ff']);
 
     tabs.appendChild(timeAttackTab);
     tabs.appendChild(endlessTab);
 
-    // Scores container with arcade panel
+    // Scores container
     const scoresPanel = document.createElement('div');
     scoresPanel.style.cssText = `
-      background: #111;
-      border: 3px solid #00ffff;
-      border-radius: 4px;
+      background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,60,0.8) 100%);
+      border: 4px solid #ff6600;
       padding: 20px;
       width: 100%;
-      max-width: 450px;
-      box-shadow:
-        0 0 15px rgba(0, 255, 255, 0.3),
-        inset 0 0 30px rgba(0, 0, 0, 0.8);
+      max-width: 500px;
+      box-shadow: 5px 5px 0px #000;
+      clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 15px, 100% calc(100% - 15px), calc(100% - 15px) 100%, 15px 100%, 0 calc(100% - 15px), 0 15px);
     `;
 
     const scoresContainer = document.createElement('div');
@@ -141,38 +122,31 @@ export class Leaderboard {
     const backBtn = document.createElement('button');
     backBtn.textContent = 'BACK';
     backBtn.style.cssText = `
-      background: transparent;
-      border: 3px solid #ff3366;
-      border-radius: 4px;
-      color: #ff3366;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.7rem;
-      padding: 12px 30px;
+      background: linear-gradient(90deg, #ff0033 0%, #cc0029 100%);
+      border: none;
+      color: white;
+      font-family: 'Russo One', 'Impact', sans-serif;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 15px 40px;
       margin-top: 2rem;
       cursor: pointer;
       transition: all 0.1s;
-      box-shadow:
-        0 0 10px rgba(255, 51, 102, 0.4),
-        inset 0 0 15px rgba(255, 51, 102, 0.1);
-      text-shadow: 0 0 10px #ff3366;
+      box-shadow: 4px 4px 0px #000;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
     `;
 
     backBtn.addEventListener('mouseenter', () => {
-      backBtn.style.background = '#ff336633';
-      backBtn.style.boxShadow = `
-        0 0 20px rgba(255, 51, 102, 0.6),
-        inset 0 0 20px rgba(255, 51, 102, 0.2)
-      `;
-      backBtn.style.transform = 'scale(1.05)';
+      backBtn.style.transform = 'translateX(5px) scale(1.05)';
+      backBtn.style.boxShadow = '6px 6px 0px #000';
     });
 
     backBtn.addEventListener('mouseleave', () => {
-      backBtn.style.background = 'transparent';
-      backBtn.style.boxShadow = `
-        0 0 10px rgba(255, 51, 102, 0.4),
-        inset 0 0 15px rgba(255, 51, 102, 0.1)
-      `;
-      backBtn.style.transform = 'scale(1)';
+      backBtn.style.transform = 'translateX(0) scale(1)';
+      backBtn.style.boxShadow = '4px 4px 0px #000';
     });
 
     backBtn.addEventListener('click', () => this.onBack());
@@ -187,48 +161,33 @@ export class Leaderboard {
     return container;
   }
 
-  private createTab(text: string, mode: GameMode): HTMLButtonElement {
+  private createTab(text: string, mode: GameMode, colors: string[]): HTMLButtonElement {
     const tab = document.createElement('button');
     tab.textContent = text;
     tab.dataset.mode = mode;
 
     const isActive = mode === this.currentMode;
-    const activeColor = mode === GameMode.TimeAttack ? '#00ffff' : '#ff00ff';
 
     tab.style.cssText = `
-      background: ${isActive ? activeColor + '33' : 'transparent'};
-      border: 3px solid ${activeColor};
-      border-radius: 4px;
-      color: ${activeColor};
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.55rem;
-      padding: 10px 16px;
+      background: ${isActive ? `linear-gradient(90deg, ${colors[0]} 0%, ${colors[1]} 100%)` : 'rgba(255,255,255,0.1)'};
+      border: none;
+      color: white;
+      font-family: 'Russo One', 'Impact', sans-serif;
+      font-size: 0.9rem;
+      padding: 12px 20px;
       cursor: pointer;
       transition: all 0.1s;
-      box-shadow: ${isActive
-        ? `0 0 15px ${activeColor}, inset 0 0 20px ${activeColor}44`
-        : `0 0 5px ${activeColor}66`};
-      text-shadow: 0 0 5px ${activeColor};
+      box-shadow: ${isActive ? '3px 3px 0px #000' : 'none'};
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 0px #000;
+      clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
     `;
 
     tab.addEventListener('click', () => {
       this.currentMode = mode;
       this.updateTabs();
       this.renderScores();
-    });
-
-    tab.addEventListener('mouseenter', () => {
-      if (mode !== this.currentMode) {
-        tab.style.background = activeColor + '22';
-        tab.style.boxShadow = `0 0 10px ${activeColor}`;
-      }
-    });
-
-    tab.addEventListener('mouseleave', () => {
-      if (mode !== this.currentMode) {
-        tab.style.background = 'transparent';
-        tab.style.boxShadow = `0 0 5px ${activeColor}66`;
-      }
     });
 
     return tab;
@@ -240,12 +199,12 @@ export class Leaderboard {
       const btn = tab as HTMLButtonElement;
       const mode = btn.dataset.mode as GameMode;
       const isActive = mode === this.currentMode;
-      const activeColor = mode === GameMode.TimeAttack ? '#00ffff' : '#ff00ff';
+      const colors = mode === GameMode.TimeAttack ? ['#ff6600', '#ffcc00'] : ['#00ccff', '#0066ff'];
 
-      btn.style.background = isActive ? activeColor + '33' : 'transparent';
-      btn.style.boxShadow = isActive
-        ? `0 0 15px ${activeColor}, inset 0 0 20px ${activeColor}44`
-        : `0 0 5px ${activeColor}66`;
+      btn.style.background = isActive
+        ? `linear-gradient(90deg, ${colors[0]} 0%, ${colors[1]} 100%)`
+        : 'rgba(255,255,255,0.1)';
+      btn.style.boxShadow = isActive ? '3px 3px 0px #000' : 'none';
     });
   }
 
@@ -258,104 +217,90 @@ export class Leaderboard {
       : this.data.endless;
 
     if (scores.length === 0) {
-      const empty = document.createElement('p');
-      empty.textContent = 'NO SCORES YET';
+      const empty = document.createElement('div');
       empty.style.cssText = `
-        color: rgba(255,255,255,0.4);
         text-align: center;
-        font-size: 0.7rem;
-        margin: 2rem 0;
-        text-shadow: 0 0 5px rgba(255,255,255,0.2);
+        padding: 2rem;
+      `;
+      empty.innerHTML = `
+        <p style="color: rgba(255,255,255,0.5); font-size: 1rem; margin-bottom: 1rem;">NO SCORES YET</p>
+        <p style="color: #99ff00; font-size: 1.2rem; text-shadow: 2px 2px 0px #000;">BE THE FIRST!</p>
       `;
       scoresContainer.appendChild(empty);
-
-      const hint = document.createElement('p');
-      hint.textContent = 'BE THE FIRST!';
-      hint.style.cssText = `
-        color: #00ff66;
-        text-align: center;
-        font-size: 0.6rem;
-        animation: hintBlink 1s step-end infinite;
-        text-shadow: 0 0 10px #00ff66;
-      `;
-      scoresContainer.appendChild(hint);
-
-      // Add blink animation if not already added
-      if (!document.querySelector('#hint-blink-style')) {
-        const style = document.createElement('style');
-        style.id = 'hint-blink-style';
-        style.textContent = `
-          @keyframes hintBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-          }
-        `;
-        document.head.appendChild(style);
-      }
-
       return;
     }
 
-    // Header row
+    // Header
     const header = document.createElement('div');
     header.style.cssText = `
       display: flex;
       justify-content: space-between;
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      border-bottom: 2px solid #00ffff44;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border-bottom: 3px solid #ff6600;
     `;
     header.innerHTML = `
-      <span style="color: #00ffff; font-size: 0.5rem; width: 30px; text-shadow: 0 0 5px #00ffff;">RNK</span>
-      <span style="color: #00ffff; font-size: 0.5rem; flex: 1; text-align: center; text-shadow: 0 0 5px #00ffff;">NAME</span>
-      <span style="color: #00ffff; font-size: 0.5rem; width: 100px; text-align: right; text-shadow: 0 0 5px #00ffff;">SCORE</span>
+      <span style="color: #00ccff; font-size: 0.8rem; width: 50px;">RANK</span>
+      <span style="color: #00ccff; font-size: 0.8rem; flex: 1; text-align: center;">NAME</span>
+      <span style="color: #00ccff; font-size: 0.8rem; width: 120px; text-align: right;">SCORE</span>
     `;
     scoresContainer.appendChild(header);
 
     scores.forEach((entry, index) => {
       const row = document.createElement('div');
       const isFirst = index === 0;
-      const rankColor = isFirst ? '#ffcc00' : index < 3 ? '#00ff66' : '#ffffff';
+      const colors = isFirst ? ['#ffcc00', '#ff6600'] : index < 3 ? ['#99ff00', '#66cc00'] : ['rgba(255,255,255,0.8)', 'rgba(255,255,255,0.6)'];
 
       row.style.cssText = `
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 12px;
-        background: ${isFirst ? 'rgba(255, 204, 0, 0.1)' : 'transparent'};
-        border-radius: 4px;
-        margin-bottom: 4px;
-        ${isFirst ? 'border: 1px solid #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);' : ''}
+        padding: 12px 15px;
+        margin-bottom: 5px;
+        background: ${isFirst ? 'linear-gradient(90deg, rgba(255, 204, 0, 0.2) 0%, rgba(255, 102, 0, 0.2) 100%)' : 'transparent'};
+        ${isFirst ? 'border: 2px solid #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);' : ''}
       `;
 
+      const rankText = index === 0 ? '1ST' : index === 1 ? '2ND' : index === 2 ? '3RD' : `${index + 1}TH`;
       const rank = document.createElement('span');
-      rank.textContent = `${(index + 1).toString().padStart(2, '0')}`;
+      rank.textContent = rankText;
       rank.style.cssText = `
-        color: ${rankColor};
-        font-size: 0.6rem;
-        width: 30px;
-        text-shadow: 0 0 5px ${rankColor};
+        background: ${isFirst ? 'linear-gradient(180deg, #ffcc00 0%, #ff6600 100%)' : index < 3 ? 'linear-gradient(180deg, #99ff00 0%, #66cc00 100%)' : 'none'};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: ${index < 3 ? 'transparent' : colors[0]};
+        background-clip: text;
+        font-size: 1rem;
+        width: 50px;
+        font-family: 'Bebas Neue', 'Impact', sans-serif;
+        letter-spacing: 1px;
+        ${isFirst ? 'filter: drop-shadow(1px 1px 0px #000);' : ''}
       `;
 
       const name = document.createElement('span');
       name.textContent = entry.name;
       name.style.cssText = `
         color: ${isFirst ? '#ffcc00' : '#ffffff'};
-        font-size: 0.8rem;
+        font-size: 1.3rem;
         flex: 1;
         text-align: center;
-        letter-spacing: 0.2em;
-        text-shadow: ${isFirst ? '0 0 10px #ffcc00' : 'none'};
+        letter-spacing: 0.3em;
+        font-family: 'Bebas Neue', 'Impact', sans-serif;
+        text-shadow: ${isFirst ? '2px 2px 0px #000' : '1px 1px 0px #000'};
       `;
 
       const score = document.createElement('span');
       score.textContent = entry.score.toString().padStart(6, '0');
       score.style.cssText = `
-        color: ${isFirst ? '#00ff66' : '#00ffff'};
-        font-size: 0.7rem;
-        width: 100px;
+        background: ${isFirst ? 'linear-gradient(180deg, #00ccff 0%, #0066ff 100%)' : 'none'};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: ${isFirst ? 'transparent' : '#00ccff'};
+        background-clip: text;
+        font-size: 1.2rem;
+        width: 120px;
         text-align: right;
-        text-shadow: 0 0 5px ${isFirst ? '#00ff66' : '#00ffff'};
+        font-family: 'Bebas Neue', 'Impact', sans-serif;
+        letter-spacing: 2px;
+        ${isFirst ? 'filter: drop-shadow(1px 1px 0px #000);' : ''}
       `;
 
       row.appendChild(rank);
@@ -380,7 +325,6 @@ export class Leaderboard {
     scores.push(entry);
     scores.sort((a, b) => b.score - a.score);
 
-    // Keep only top entries
     if (mode === GameMode.TimeAttack) {
       this.data.timeAttack = scores.slice(0, MAX_ENTRIES);
     } else {
