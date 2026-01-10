@@ -215,31 +215,36 @@ export class Roomba {
     binMaterial.diffuseColor = new Color3(0.18, 0.18, 0.2);
     binSection.material = binMaterial;
 
-    // Bin capacity bar (background)
+    // Bin capacity bar (background) - positioned on top of roomba, visible from overhead camera
     this.binBar = MeshBuilder.CreateBox(
       'binBar',
-      { width: 0.35, height: 0.03, depth: 0.015 },
+      { width: 0.28, height: 0.015, depth: 0.06 },
       this.scene
     );
-    this.binBar.position = new Vector3(0, 0.3, 0);
+    // Position on top of the roomba body, toward the back (negative Z is back)
+    this.binBar.position = new Vector3(0, this.height * 0.6, -this.diameter * 0.2);
+    // Slight tilt toward camera for better visibility
+    this.binBar.rotation.x = -0.3;
     this.binBar.parent = this.body;
 
     const binBarMaterial = new StandardMaterial('binBarMat', this.scene);
-    binBarMaterial.diffuseColor = new Color3(0.2, 0.2, 0.2);
+    binBarMaterial.diffuseColor = new Color3(0.15, 0.15, 0.15);
+    binBarMaterial.emissiveColor = new Color3(0.05, 0.05, 0.05);
     this.binBar.material = binBarMaterial;
 
     // Bin capacity bar (fill)
     this.binBarFill = MeshBuilder.CreateBox(
       'binBarFill',
-      { width: 0.33, height: 0.025, depth: 0.02 },
+      { width: 0.26, height: 0.02, depth: 0.05 },
       this.scene
     );
-    this.binBarFill.position = new Vector3(0, 0.3, 0);
+    this.binBarFill.position = new Vector3(0, this.height * 0.6 + 0.005, -this.diameter * 0.2);
+    this.binBarFill.rotation.x = -0.3;
     this.binBarFill.parent = this.body;
 
     const fillMaterial = new StandardMaterial('fillMat', this.scene);
     fillMaterial.diffuseColor = new Color3(0.2, 0.8, 0.2);
-    fillMaterial.emissiveColor = new Color3(0.1, 0.4, 0.1);
+    fillMaterial.emissiveColor = new Color3(0.1, 0.5, 0.1);
     this.binBarFill.material = fillMaterial;
     this.binBarFill.scaling.x = 0;
 

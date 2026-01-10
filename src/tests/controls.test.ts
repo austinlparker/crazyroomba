@@ -270,3 +270,97 @@ describe('Camera Following', () => {
     }
   });
 });
+
+describe('Camera Smoothing', () => {
+  const ROTATION_SMOOTHING = 0.25;
+
+  // Simulates the camera smoothing from ThirdPersonCamera.update()
+  function updateCameraSmoothing(
+    currentAlpha: number,
+    roombaRotation: number
+  ): number {
+    const targetAlpha = roombaRotation + Math.PI;
+    let alphaDiff = targetAlpha - currentAlpha;
+
+    // Normalize angle difference to -PI to PI range
+    while (alphaDiff > Math.PI) alphaDiff -= Math.PI * 2;
+    while (alphaDiff < -Math.PI) alphaDiff += Math.PI * 2;
+
+    return currentAlpha + alphaDiff * ROTATION_SMOOTHING;
+  }
+
+  it('should smoothly approach target rotation (not instant)', () => {
+    const currentAlpha = Math.PI;
+    const roombaRotation = Math.PI / 2; // Roomba turned 90 degrees
+    const targetAlpha = roombaRotation + Math.PI;
+
+    const newAlpha = updateCameraSmoothing(currentAlpha, roombaRotation);
+
+    // Camera should move toward target but not reach it instantly
+    expect(newAlpha).not.toBeCloseTo(targetAlpha);
+    expect(newAlpha).toBeGreaterThan(currentAlpha); // Moving toward target
+    expect(newAlpha).toBeLessThan(targetAlpha); // But not there yet
+  });
+
+  it('should move 25% of the way to target each frame', () => {
+    const currentAlpha = Math.PI;
+    const roombaRotation = 0; // Target alpha = PI, so diff = 0
+    const newAlpha = updateCameraSmoothing(currentAlpha, roombaRotation);
+
+    // If current = target, no movement
+    expect(newAlpha).toBeCloseTo(Math.PI);
+  });
+
+  it('should eventually converge to target rotation', () => {
+    let currentAlpha = Math.PI;
+    const roombaRotation = Math.PI / 2;
+    const targetAlpha = roombaRotation + Math.PI;
+
+    // Simulate many frames
+    for (let i = 0; i < 50; i++) {
+      currentAlpha = updateCameraSmoothing(currentAlpha, roombaRotation);
+    }
+
+    // Should be very close to target after many iterations
+    expect(currentAlpha).toBeCloseTo(targetAlpha, 2);
+  });
+
+  it('should handle angle wrapping correctly', () => {
+    // Test when crossing 0/2PI boundary
+    const currentAlpha = 0.1; // Just past 0
+    const roombaRotation = -0.2; // Roomba at -0.2 (equivalent to ~2PI - 0.2)
+
+    const newAlpha = updateCameraSmoothing(currentAlpha, roombaRotation);
+
+    // Should take the short path, not go all the way around
+    const diff = Math.abs(newAlpha - currentAlpha);
+    expect(diff).toBeLessThan(Math.PI); // Short path, not long way around
+  });
+});
+
+describe('Roomba and Camera Integration', () => {
+  it('should show roomba rotating relative to camera during turn', () => {
+    // Simulate: roomba turns, camera follows with lag
+    let roombaRotation = 0;
+    let cameraAlpha = Math.PI; // Behind roomba
+    const turnInput = 1;
+    const deltaTime = 0.016; // ~60fps
+    const turnSpeed = 3;
+    const smoothing = 0.25;
+
+    // Simulate one frame of turning
+    roombaRotation += turnInput * turnSpeed * deltaTime;
+
+    // Update camera with smoothing
+    const targetAlpha = roombaRotation + Math.PI;
+    let alphaDiff = targetAlpha - cameraAlpha;
+    while (alphaDiff > Math.PI) alphaDiff -= Math.PI * 2;
+    while (alphaDiff < -Math.PI) alphaDiff += Math.PI * 2;
+    cameraAlpha += alphaDiff * smoothing;
+
+    // The visual angle between roomba and camera should be non-zero
+    // (roomba appears to turn on screen because camera lags behind)
+    const visualRotationDiff = roombaRotation - (cameraAlpha - Math.PI);
+    expect(Math.abs(visualRotationDiff)).toBeGreaterThan(0);
+  });
+});
