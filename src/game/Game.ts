@@ -202,14 +202,20 @@ export class Game {
     const input = this.inputSystem.getInput();
     const touchInput = this.touchControls.getInput();
 
-    // Combine inputs (touch overrides keyboard if active)
+    // Combine movement inputs (touch overrides keyboard if active)
     const finalInput = touchInput.active ? touchInput : input;
+
+    // Combine camera inputs from both sources
+    const cameraInput = {
+      x: (touchInput.cameraX || 0) + (input.cameraX || 0),
+      y: (touchInput.cameraY || 0) + (input.cameraY || 0),
+    };
 
     // Update roomba
     this.roomba.update(deltaTime, finalInput);
 
-    // Update camera
-    this.thirdPersonCamera.update();
+    // Update camera with input
+    this.thirdPersonCamera.update(deltaTime, cameraInput);
 
     // Check for dust collection
     const collectedDust = this.dustSpawner.checkCollection(

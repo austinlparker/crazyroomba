@@ -1,53 +1,113 @@
 export interface TouchInput {
   forward: number;
   turn: number;
+  cameraX: number; // Camera horizontal rotation
+  cameraY: number; // Camera vertical (zoom/tilt)
   active: boolean;
+}
+
+interface Joystick {
+  outer: HTMLDivElement;
+  inner: HTMLDivElement;
+  isActive: boolean;
+  startX: number;
+  startY: number;
+  currentX: number;
+  currentY: number;
+  touchId: number | null;
 }
 
 export class TouchControls {
   private container: HTMLDivElement;
-  private joystickOuter: HTMLDivElement;
-  private joystickInner: HTMLDivElement;
+  private leftStick: Joystick;
+  private rightStick: Joystick;
 
-  private isActive: boolean = false;
-  private startX: number = 0;
-  private startY: number = 0;
-  private currentX: number = 0;
-  private currentY: number = 0;
   private maxDistance: number = 50;
 
   private input: TouchInput = {
     forward: 0,
     turn: 0,
+    cameraX: 0,
+    cameraY: 0,
     active: false,
   };
 
   constructor(_canvas: HTMLCanvasElement) {
     this.container = null!;
-    this.joystickOuter = null!;
-    this.joystickInner = null!;
+    this.leftStick = this.createEmptyJoystick();
+    this.rightStick = this.createEmptyJoystick();
 
-    this.createJoystick();
+    this.createControls();
     this.setupTouchEvents();
   }
 
-  private createJoystick(): void {
-    // Container for touch area
+  private createEmptyJoystick(): Joystick {
+    return {
+      outer: null!,
+      inner: null!,
+      isActive: false,
+      startX: 0,
+      startY: 0,
+      currentX: 0,
+      currentY: 0,
+      touchId: null,
+    };
+  }
+
+  private createControls(): void {
+    // Main container
     this.container = document.createElement('div');
     this.container.id = 'touch-controls';
     this.container.style.cssText = `
       position: absolute;
-      bottom: 20px;
-      left: 20px;
-      width: 150px;
-      height: 150px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 200px;
       display: none;
       z-index: 15;
+      pointer-events: none;
     `;
 
+    // Left joystick (movement)
+    const leftContainer = this.createJoystickContainer('left');
+    leftContainer.style.left = '30px';
+    this.leftStick = this.createJoystick(leftContainer);
+    this.container.appendChild(leftContainer);
+
+    // Right joystick (camera)
+    const rightContainer = this.createJoystickContainer('right');
+    rightContainer.style.right = '30px';
+    this.rightStick = this.createJoystick(rightContainer);
+    this.container.appendChild(rightContainer);
+
+    // Labels
+    const leftLabel = this.createLabel('MOVE');
+    leftContainer.appendChild(leftLabel);
+
+    const rightLabel = this.createLabel('CAMERA');
+    rightContainer.appendChild(rightLabel);
+
+    document.body.appendChild(this.container);
+  }
+
+  private createJoystickContainer(id: string): HTMLDivElement {
+    const container = document.createElement('div');
+    container.id = `joystick-${id}`;
+    container.style.cssText = `
+      position: absolute;
+      bottom: 20px;
+      width: 140px;
+      height: 140px;
+      pointer-events: auto;
+    `;
+    return container;
+  }
+
+  private createJoystick(container: HTMLDivElement): Joystick {
     // Outer ring
-    this.joystickOuter = document.createElement('div');
-    this.joystickOuter.style.cssText = `
+    const outer = document.createElement('div');
+    outer.style.cssText = `
       position: absolute;
       width: 120px;
       height: 120px;
@@ -60,8 +120,8 @@ export class TouchControls {
     `;
 
     // Inner stick
-    this.joystickInner = document.createElement('div');
-    this.joystickInner.style.cssText = `
+    const inner = document.createElement('div');
+    inner.style.cssText = `
       position: absolute;
       width: 50px;
       height: 50px;
@@ -70,64 +130,160 @@ export class TouchControls {
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      transition: transform 0.05s;
+      transition: none;
     `;
 
-    this.joystickOuter.appendChild(this.joystickInner);
-    this.container.appendChild(this.joystickOuter);
-    document.body.appendChild(this.container);
+    outer.appendChild(inner);
+    container.appendChild(outer);
+
+    return {
+      outer,
+      inner,
+      isActive: false,
+      startX: 0,
+      startY: 0,
+      currentX: 0,
+      currentY: 0,
+      touchId: null,
+    };
+  }
+
+  private createLabel(text: string): HTMLDivElement {
+    const label = document.createElement('div');
+    label.textContent = text;
+    label.style.cssText = `
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      font-family: monospace;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    `;
+    return label;
   }
 
   private setupTouchEvents(): void {
-    // Touch start
-    this.container.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      const touch = e.touches[0];
-      const rect = this.joystickOuter.getBoundingClientRect();
-
-      this.isActive = true;
-      this.startX = rect.left + rect.width / 2;
-      this.startY = rect.top + rect.height / 2;
-      this.currentX = touch.clientX;
-      this.currentY = touch.clientY;
-
-      this.updateJoystick();
-    });
-
-    // Touch move
-    this.container.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      if (!this.isActive) return;
-
-      const touch = e.touches[0];
-      this.currentX = touch.clientX;
-      this.currentY = touch.clientY;
-
-      this.updateJoystick();
-    });
-
-    // Touch end
-    this.container.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      this.isActive = false;
-      this.input = { forward: 0, turn: 0, active: false };
-      this.joystickInner.style.transform = 'translate(-50%, -50%)';
-    });
-
-    // Also handle touch cancel
-    this.container.addEventListener('touchcancel', () => {
-      this.isActive = false;
-      this.input = { forward: 0, turn: 0, active: false };
-      this.joystickInner.style.transform = 'translate(-50%, -50%)';
-    });
+    // Use document-level touch events for better tracking
+    document.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
+    document.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+    document.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
+    document.addEventListener('touchcancel', (e) => this.handleTouchEnd(e), { passive: false });
   }
 
-  private updateJoystick(): void {
-    const deltaX = this.currentX - this.startX;
-    const deltaY = this.currentY - this.startY;
+  private handleTouchStart(e: TouchEvent): void {
+    if (!this.isVisible()) return;
+
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      const joystick = this.getJoystickForTouch(touch);
+
+      if (joystick && joystick.touchId === null) {
+        e.preventDefault();
+        const rect = joystick.outer.getBoundingClientRect();
+        joystick.isActive = true;
+        joystick.touchId = touch.identifier;
+        joystick.startX = rect.left + rect.width / 2;
+        joystick.startY = rect.top + rect.height / 2;
+        joystick.currentX = touch.clientX;
+        joystick.currentY = touch.clientY;
+        this.updateJoystickVisual(joystick);
+      }
+    }
+
+    this.updateInput();
+  }
+
+  private handleTouchMove(e: TouchEvent): void {
+    if (!this.isVisible()) return;
+
+    let handled = false;
+
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+
+      // Check left stick
+      if (this.leftStick.touchId === touch.identifier) {
+        this.leftStick.currentX = touch.clientX;
+        this.leftStick.currentY = touch.clientY;
+        this.updateJoystickVisual(this.leftStick);
+        handled = true;
+      }
+
+      // Check right stick
+      if (this.rightStick.touchId === touch.identifier) {
+        this.rightStick.currentX = touch.clientX;
+        this.rightStick.currentY = touch.clientY;
+        this.updateJoystickVisual(this.rightStick);
+        handled = true;
+      }
+    }
+
+    if (handled) {
+      e.preventDefault();
+      this.updateInput();
+    }
+  }
+
+  private handleTouchEnd(e: TouchEvent): void {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+
+      // Check left stick
+      if (this.leftStick.touchId === touch.identifier) {
+        this.resetJoystick(this.leftStick);
+      }
+
+      // Check right stick
+      if (this.rightStick.touchId === touch.identifier) {
+        this.resetJoystick(this.rightStick);
+      }
+    }
+
+    this.updateInput();
+  }
+
+  private getJoystickForTouch(touch: Touch): Joystick | null {
+    const leftRect = this.leftStick.outer.getBoundingClientRect();
+    const rightRect = this.rightStick.outer.getBoundingClientRect();
+
+    // Expand touch area slightly
+    const padding = 30;
+
+    if (
+      touch.clientX >= leftRect.left - padding &&
+      touch.clientX <= leftRect.right + padding &&
+      touch.clientY >= leftRect.top - padding &&
+      touch.clientY <= leftRect.bottom + padding
+    ) {
+      return this.leftStick;
+    }
+
+    if (
+      touch.clientX >= rightRect.left - padding &&
+      touch.clientX <= rightRect.right + padding &&
+      touch.clientY >= rightRect.top - padding &&
+      touch.clientY <= rightRect.bottom + padding
+    ) {
+      return this.rightStick;
+    }
+
+    return null;
+  }
+
+  private resetJoystick(joystick: Joystick): void {
+    joystick.isActive = false;
+    joystick.touchId = null;
+    joystick.inner.style.transform = 'translate(-50%, -50%)';
+  }
+
+  private updateJoystickVisual(joystick: Joystick): void {
+    const deltaX = joystick.currentX - joystick.startX;
+    const deltaY = joystick.currentY - joystick.startY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    // Clamp to max distance
     let clampedX = deltaX;
     let clampedY = deltaY;
 
@@ -137,14 +293,40 @@ export class TouchControls {
       clampedY = Math.sin(angle) * this.maxDistance;
     }
 
-    // Update visual position
-    this.joystickInner.style.transform = `translate(calc(-50% + ${clampedX}px), calc(-50% + ${clampedY}px))`;
+    joystick.inner.style.transform = `translate(calc(-50% + ${clampedX}px), calc(-50% + ${clampedY}px))`;
+  }
 
-    // Update input values (-1 to 1)
+  private getJoystickValues(joystick: Joystick): { x: number; y: number } {
+    if (!joystick.isActive) {
+      return { x: 0, y: 0 };
+    }
+
+    const deltaX = joystick.currentX - joystick.startX;
+    const deltaY = joystick.currentY - joystick.startY;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    let normalizedX = deltaX / this.maxDistance;
+    let normalizedY = deltaY / this.maxDistance;
+
+    if (distance > this.maxDistance) {
+      const angle = Math.atan2(deltaY, deltaX);
+      normalizedX = Math.cos(angle);
+      normalizedY = Math.sin(angle);
+    }
+
+    return { x: normalizedX, y: normalizedY };
+  }
+
+  private updateInput(): void {
+    const left = this.getJoystickValues(this.leftStick);
+    const right = this.getJoystickValues(this.rightStick);
+
     this.input = {
-      forward: -clampedY / this.maxDistance, // Negative because Y is inverted
-      turn: -clampedX / this.maxDistance, // Negative for correct turn direction
-      active: true,
+      forward: -left.y, // Negative because Y is inverted
+      turn: -left.x, // Negative for correct turn direction
+      cameraX: right.x, // Camera horizontal
+      cameraY: -right.y, // Camera vertical (inverted)
+      active: this.leftStick.isActive || this.rightStick.isActive,
     };
   }
 
@@ -161,8 +343,9 @@ export class TouchControls {
 
   hide(): void {
     this.container.style.display = 'none';
-    this.isActive = false;
-    this.input = { forward: 0, turn: 0, active: false };
+    this.resetJoystick(this.leftStick);
+    this.resetJoystick(this.rightStick);
+    this.input = { forward: 0, turn: 0, cameraX: 0, cameraY: 0, active: false };
   }
 
   isVisible(): boolean {
