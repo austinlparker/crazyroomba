@@ -13,6 +13,7 @@
     "@babylonjs/core": "^7.34.0",
     "@babylonjs/gui": "^7.34.0",
     "@babylonjs/havok": "^1.3.10",
+    "@tonejs/midi": "^2.0.28",
     "pathfinding": "^0.4.18",
     "tone": "^15.0.4"
   },
