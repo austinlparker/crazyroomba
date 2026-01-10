@@ -14,12 +14,12 @@ export class ThirdPersonCamera {
   private camera: ArcRotateCamera;
   private roomba: Roomba;
   private targetPosition: Vector3 = Vector3.Zero();
-  private smoothing: number = 0.1;
+  private smoothing: number = 0.15; // Slightly faster position follow
 
   // Manual control state
   private isManualControl: boolean = false;
   private manualControlTimeout: number = 0;
-  private autoFollowDelay: number = 2000; // ms before auto-follow resumes
+  private autoFollowDelay: number = 1000; // ms before auto-follow resumes (faster)
 
   // Control sensitivity
   private rotationSpeed: number = 3;
@@ -28,21 +28,21 @@ export class ThirdPersonCamera {
   constructor(scene: Scene, canvas: HTMLCanvasElement, roomba: Roomba) {
     this.roomba = roomba;
 
-    // Create arc rotate camera
+    // Create arc rotate camera - close behind for "piloting" feel
     this.camera = new ArcRotateCamera(
       'thirdPersonCamera',
-      Math.PI, // alpha - horizontal rotation
-      Math.PI / 3, // beta - vertical angle (60 degrees from top)
-      8, // radius - distance from target
+      Math.PI, // alpha - horizontal rotation (behind roomba)
+      Math.PI / 2.5, // beta - low angle, just above and behind (~72 degrees)
+      2.5, // radius - close to roomba for immersive feel
       roomba.getPosition(),
       scene
     );
 
-    // Camera settings - allow zooming to see larger house
-    this.camera.lowerRadiusLimit = 3;
-    this.camera.upperRadiusLimit = 25;
-    this.camera.lowerBetaLimit = Math.PI / 6; // Don't go too low
-    this.camera.upperBetaLimit = Math.PI / 2.2; // Don't go directly overhead
+    // Camera settings - tight range for close piloting view
+    this.camera.lowerRadiusLimit = 1.5;
+    this.camera.upperRadiusLimit = 10;
+    this.camera.lowerBetaLimit = Math.PI / 4; // Can go fairly low (45 degrees)
+    this.camera.upperBetaLimit = Math.PI / 2.1; // Almost horizontal but not quite
 
     // Enable camera collision detection
     this.camera.checkCollisions = true;
@@ -99,7 +99,7 @@ export class ThirdPersonCamera {
       while (normalizedDiff > Math.PI) normalizedDiff -= Math.PI * 2;
       while (normalizedDiff < -Math.PI) normalizedDiff += Math.PI * 2;
 
-      this.camera.alpha += normalizedDiff * 0.02; // Very slow follow
+      this.camera.alpha += normalizedDiff * 0.08; // Faster follow for tight piloting feel
     }
 
     // Clamp beta
