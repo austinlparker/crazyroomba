@@ -23,187 +23,152 @@ export class MainMenu {
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a12 100%);
+      background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 30%, #2a1a0a 70%, #0d0d1a 100%);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 20;
-      font-family: 'Press Start 2P', cursive;
+      font-family: 'Russo One', 'Impact', 'Arial Black', sans-serif;
+      overflow: hidden;
     `;
 
-    // Arcade cabinet border effect
-    const cabinetFrame = document.createElement('div');
-    cabinetFrame.style.cssText = `
+    // Dynamic background stripes
+    const stripes = document.createElement('div');
+    stripes.style.cssText = `
       position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      border: 4px solid #00ffff;
-      border-radius: 8px;
-      box-shadow:
-        0 0 20px rgba(0, 255, 255, 0.3),
-        inset 0 0 60px rgba(0, 0, 0, 0.5);
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(255, 102, 0, 0.03) 40px,
+        rgba(255, 102, 0, 0.03) 80px
+      );
+      animation: stripeMove 20s linear infinite;
       pointer-events: none;
     `;
-    container.appendChild(cabinetFrame);
+    container.appendChild(stripes);
 
-    // Corner decorations
-    const corners = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
-    corners.forEach(corner => {
-      const cornerEl = document.createElement('div');
-      const [vertical, horizontal] = corner.split('-');
-      cornerEl.style.cssText = `
-        position: absolute;
-        ${vertical}: 20px;
-        ${horizontal}: 20px;
-        width: 30px;
-        height: 30px;
-        border-${vertical}: 3px solid #ff00ff;
-        border-${horizontal}: 3px solid #ff00ff;
-        pointer-events: none;
-      `;
-      container.appendChild(cornerEl);
-    });
-
-    // Title with neon effect
-    const title = document.createElement('h1');
-    title.textContent = 'CRAZY ROOMBA';
-    title.style.cssText = `
-      color: #00ffff;
-      font-size: 2.5rem;
-      font-weight: bold;
-      text-shadow:
-        0 0 10px #00ffff,
-        0 0 20px #00ffff,
-        0 0 40px #00ffff,
-        0 0 80px #00ffff;
-      margin-bottom: 0.5rem;
-      letter-spacing: 4px;
-      animation: titleGlow 2s ease-in-out infinite;
-    `;
-
-    // Add title animation
+    // Add stripe animation
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes titleGlow {
-        0%, 100% {
-          text-shadow:
-            0 0 10px #00ffff,
-            0 0 20px #00ffff,
-            0 0 40px #00ffff,
-            0 0 80px #00ffff;
-        }
-        50% {
-          text-shadow:
-            0 0 5px #00ffff,
-            0 0 10px #00ffff,
-            0 0 20px #00ffff,
-            0 0 40px #00ffff;
-        }
+      @keyframes stripeMove {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(80px, 80px); }
       }
-      @keyframes blink {
-        0%, 50%, 100% { opacity: 1; }
-        25%, 75% { opacity: 0.7; }
-      }
-      @keyframes buttonPulse {
+      @keyframes pulse {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.02); }
+      }
+      @keyframes slideIn {
+        0% { transform: translateX(-100px); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
       }
     `;
     document.head.appendChild(style);
 
-    // Subtitle
+    // Title with gradient
+    const title = document.createElement('h1');
+    title.textContent = 'CRAZY ROOMBA';
+    title.style.cssText = `
+      font-family: 'Bebas Neue', 'Impact', sans-serif;
+      font-size: 5rem;
+      font-weight: bold;
+      background: linear-gradient(180deg, #ffcc00 0%, #ff6600 50%, #ff3300 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 8px;
+      margin-bottom: 0;
+      filter: drop-shadow(4px 4px 0px #000) drop-shadow(0 0 30px rgba(255, 102, 0, 0.5));
+      position: relative;
+      z-index: 1;
+    `;
+
+    // Subtitle - extreme tagline
     const subtitle = document.createElement('p');
-    subtitle.textContent = '- VACUUM LIKE YOU MEAN IT -';
+    subtitle.textContent = 'VACUUM TO THE EXTREME!';
     subtitle.style.cssText = `
-      color: #ffcc00;
-      font-size: 0.6rem;
-      margin-bottom: 2rem;
-      text-shadow: 0 0 10px #ffcc00;
-      letter-spacing: 2px;
+      color: #00ccff;
+      font-size: 1.4rem;
+      margin-bottom: 3rem;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0px #000, 0 0 20px rgba(0, 204, 255, 0.5);
     `;
 
-    // Animated roomba icon using ASCII-style box
-    const icon = document.createElement('div');
-    icon.innerHTML = `
-      <div style="
-        width: 80px;
-        height: 80px;
-        border: 4px solid #00ff66;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 20px #00ff66, inset 0 0 20px rgba(0, 255, 102, 0.2);
-        animation: robotSpin 4s linear infinite;
-        position: relative;
-      ">
-        <div style="
-          width: 20px;
-          height: 20px;
-          background: #00ff66;
-          border-radius: 50%;
-          box-shadow: 0 0 10px #00ff66;
-        "></div>
-        <div style="
-          position: absolute;
-          top: 10px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 0;
-          height: 0;
-          border-left: 8px solid transparent;
-          border-right: 8px solid transparent;
-          border-bottom: 12px solid #00ff66;
-        "></div>
-      </div>
-    `;
-    icon.style.cssText = `
+    // Animated roomba graphic
+    const graphic = document.createElement('div');
+    graphic.style.cssText = `
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #333 0%, #666 50%, #333 100%);
+      border: 6px solid #ff6600;
       margin-bottom: 2rem;
+      position: relative;
+      box-shadow:
+        0 0 30px rgba(255, 102, 0, 0.6),
+        inset 0 -20px 40px rgba(0, 0, 0, 0.5);
+      animation: pulse 2s ease-in-out infinite;
     `;
 
-    // Add robot spin animation
-    const robotStyle = document.createElement('style');
-    robotStyle.textContent = `
-      @keyframes robotSpin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
+    // Direction indicator on roomba
+    const indicator = document.createElement('div');
+    indicator.style.cssText = `
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 25px solid #99ff00;
+      filter: drop-shadow(0 0 10px rgba(153, 255, 0, 0.8));
     `;
-    document.head.appendChild(robotStyle);
+    graphic.appendChild(indicator);
 
-    // Insert coin text (blinking)
-    const insertCoin = document.createElement('p');
-    insertCoin.textContent = 'INSERT COIN';
-    insertCoin.style.cssText = `
-      color: #ffcc00;
-      font-size: 0.75rem;
-      margin-bottom: 2rem;
-      animation: blink 1s step-end infinite;
-      text-shadow: 0 0 10px #ffcc00;
+    // Power light
+    const light = document.createElement('div');
+    light.style.cssText = `
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 30px;
+      height: 30px;
+      background: radial-gradient(circle, #99ff00 0%, #66cc00 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 20px #99ff00;
     `;
+    graphic.appendChild(light);
 
     // Buttons container
     const buttonsContainer = document.createElement('div');
     buttonsContainer.style.cssText = `
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 15px;
       align-items: center;
+      position: relative;
+      z-index: 1;
     `;
 
-    // Buttons
-    const timeAttackBtn = this.createArcadeButton('1P - TIME ATTACK', '#00ffff', () => {
+    // Buttons with staggered animation
+    const timeAttackBtn = this.createExtremeButton('TIME ATTACK', ['#ff6600', '#ffcc00'], 0, () => {
       this.onStartGame(GameMode.TimeAttack);
     });
 
-    const endlessBtn = this.createArcadeButton('2P - ENDLESS MODE', '#ff00ff', () => {
+    const endlessBtn = this.createExtremeButton('ENDLESS MODE', ['#00ccff', '#0066ff'], 1, () => {
       this.onStartGame(GameMode.Endless);
     });
 
-    const leaderboardBtn = this.createArcadeButton('HIGH SCORES', '#ffcc00', () => {
+    const leaderboardBtn = this.createExtremeButton('HIGH SCORES', ['#99ff00', '#66cc00'], 2, () => {
       this.onShowLeaderboard();
     });
 
@@ -214,32 +179,33 @@ export class MainMenu {
     // Controls hint
     const controls = document.createElement('div');
     controls.style.cssText = `
-      color: rgba(255,255,255,0.5);
-      font-size: 0.5rem;
-      margin-top: 2rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+      margin-top: 2.5rem;
       text-align: center;
-      line-height: 2;
+      letter-spacing: 2px;
+      position: relative;
+      z-index: 1;
     `;
     controls.innerHTML = `
-      <p style="color: #00ff66; text-shadow: 0 0 5px #00ff66;">WASD - MOVE</p>
-      <p style="color: #00ff66; text-shadow: 0 0 5px #00ff66;">Q/E - CAMERA</p>
+      <p style="color: #ff6600; margin-bottom: 8px;">W/S - GAS & REVERSE</p>
+      <p style="color: #00ccff;">A/D - STEER</p>
     `;
 
-    // Credit text
+    // Credits
     const credits = document.createElement('p');
-    credits.textContent = 'CREDITS: 99';
+    credits.textContent = '© 2000 EXTREME GAMES';
     credits.style.cssText = `
       position: absolute;
-      bottom: 30px;
-      color: #00ff66;
-      font-size: 0.5rem;
-      text-shadow: 0 0 5px #00ff66;
+      bottom: 20px;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.8rem;
+      letter-spacing: 3px;
     `;
 
     container.appendChild(title);
     container.appendChild(subtitle);
-    container.appendChild(icon);
-    container.appendChild(insertCoin);
+    container.appendChild(graphic);
     container.appendChild(buttonsContainer);
     container.appendChild(controls);
     container.appendChild(credits);
@@ -249,59 +215,59 @@ export class MainMenu {
     return container;
   }
 
-  private createArcadeButton(
+  private createExtremeButton(
     text: string,
-    color: string,
+    colors: string[],
+    index: number,
     onClick: () => void
   ): HTMLButtonElement {
     const button = document.createElement('button');
     button.textContent = text;
     button.style.cssText = `
-      background: transparent;
-      border: 3px solid ${color};
-      border-radius: 0;
-      color: ${color};
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.75rem;
-      padding: 15px 30px;
+      background: linear-gradient(90deg, ${colors[0]} 0%, ${colors[1]} 100%);
+      border: none;
+      color: white;
+      font-family: 'Russo One', 'Impact', sans-serif;
+      font-size: 1.4rem;
+      font-weight: bold;
+      padding: 18px 50px;
       cursor: pointer;
-      transition: all 0.1s;
+      transition: all 0.15s ease-out;
       box-shadow:
-        0 0 10px ${color}66,
-        inset 0 0 20px ${color}22;
-      text-shadow: 0 0 10px ${color};
-      min-width: 280px;
+        4px 4px 0px #000,
+        0 0 20px ${colors[0]}40;
+      min-width: 320px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+      clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
       position: relative;
-      overflow: hidden;
+      animation: slideIn 0.5s ease-out ${index * 0.1}s both;
     `;
 
-    // Hover effect
     button.addEventListener('mouseenter', () => {
-      button.style.background = `${color}33`;
+      button.style.transform = 'translateX(10px) scale(1.05)';
       button.style.boxShadow = `
-        0 0 20px ${color},
-        0 0 40px ${color}66,
-        inset 0 0 30px ${color}44
+        6px 6px 0px #000,
+        0 0 40px ${colors[0]}60
       `;
-      button.style.transform = 'scale(1.05)';
     });
 
     button.addEventListener('mouseleave', () => {
-      button.style.background = 'transparent';
+      button.style.transform = 'translateX(0) scale(1)';
       button.style.boxShadow = `
-        0 0 10px ${color}66,
-        inset 0 0 20px ${color}22
+        4px 4px 0px #000,
+        0 0 20px ${colors[0]}40
       `;
-      button.style.transform = 'scale(1)';
     });
 
     button.addEventListener('mousedown', () => {
-      button.style.transform = 'scale(0.95)';
-      button.style.background = `${color}66`;
+      button.style.transform = 'translateX(4px) scale(0.98)';
+      button.style.boxShadow = `2px 2px 0px #000`;
     });
 
     button.addEventListener('mouseup', () => {
-      button.style.transform = 'scale(1.05)';
+      button.style.transform = 'translateX(10px) scale(1.05)';
     });
 
     button.addEventListener('click', onClick);

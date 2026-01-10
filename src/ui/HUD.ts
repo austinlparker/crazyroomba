@@ -34,7 +34,7 @@ export class HUD {
       width: 100%;
       height: 100%;
       pointer-events: none;
-      font-family: 'Press Start 2P', cursive;
+      font-family: 'Russo One', 'Impact', 'Arial Black', sans-serif;
       z-index: 10;
       display: none;
     `;
@@ -43,136 +43,117 @@ export class HUD {
   }
 
   private createHUD(): void {
-    // Top bar with arcade panel styling
+    // Top bar with gradient
     const topBar = document.createElement('div');
     topBar.style.cssText = `
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       padding: 15px 20px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.3), transparent);
+      background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
     `;
 
-    // Timer panel (LED style)
+    // Timer panel
     const timerContainer = document.createElement('div');
     timerContainer.style.cssText = `
-      background: #111;
-      border: 3px solid #00ffff;
-      border-radius: 4px;
-      padding: 8px 15px;
-      box-shadow:
-        0 0 10px rgba(0, 255, 255, 0.3),
-        inset 0 0 20px rgba(0, 0, 0, 0.8);
+      background: linear-gradient(135deg, rgba(255, 102, 0, 0.9) 0%, rgba(255, 204, 0, 0.9) 100%);
+      padding: 10px 20px;
+      clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 8px 100%);
+      box-shadow: 3px 3px 0px #000;
     `;
     timerContainer.innerHTML = `
       <div style="
-        color: #00ffff;
-        font-size: 0.5rem;
-        margin-bottom: 4px;
-        text-shadow: 0 0 5px #00ffff;
+        color: white;
+        font-size: 0.7rem;
+        text-shadow: 1px 1px 0px #000;
+        letter-spacing: 2px;
       ">TIME</div>
       <span id="timer" style="
-        color: #00ff66;
-        font-size: 1.2rem;
-        text-shadow:
-          0 0 10px #00ff66,
-          0 0 20px #00ff66;
-        letter-spacing: 2px;
+        color: white;
+        font-size: 1.8rem;
+        font-family: 'Bebas Neue', 'Impact', sans-serif;
+        text-shadow: 2px 2px 0px #000;
+        letter-spacing: 3px;
       ">01:00</span>
     `;
     this.timerElement = timerContainer.querySelector('#timer')!;
 
-    // Score panel (LED style)
+    // Score panel
     const scoreContainer = document.createElement('div');
     scoreContainer.style.cssText = `
-      background: #111;
-      border: 3px solid #ffcc00;
-      border-radius: 4px;
-      padding: 8px 15px;
-      box-shadow:
-        0 0 10px rgba(255, 204, 0, 0.3),
-        inset 0 0 20px rgba(0, 0, 0, 0.8);
+      background: linear-gradient(135deg, rgba(0, 204, 255, 0.9) 0%, rgba(0, 102, 255, 0.9) 100%);
+      padding: 10px 20px;
+      clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+      box-shadow: 3px 3px 0px #000;
     `;
     scoreContainer.innerHTML = `
       <div style="
-        color: #ffcc00;
-        font-size: 0.5rem;
-        margin-bottom: 4px;
-        text-shadow: 0 0 5px #ffcc00;
+        color: white;
+        font-size: 0.7rem;
+        text-shadow: 1px 1px 0px #000;
+        letter-spacing: 2px;
+        text-align: center;
       ">SCORE</div>
       <span id="score" style="
-        color: #ffcc00;
-        font-size: 1.2rem;
-        text-shadow:
-          0 0 10px #ffcc00,
-          0 0 20px #ffcc00;
-        letter-spacing: 2px;
-      ">0</span>
+        color: white;
+        font-size: 1.8rem;
+        font-family: 'Bebas Neue', 'Impact', sans-serif;
+        text-shadow: 2px 2px 0px #000;
+        letter-spacing: 3px;
+      ">000000</span>
     `;
     this.scoreElement = scoreContainer.querySelector('#score')!;
 
-    // Bin indicator (LED bar style)
+    // Bin indicator
     const binContainer = document.createElement('div');
     binContainer.style.cssText = `
-      background: #111;
-      border: 3px solid #ff00ff;
-      border-radius: 4px;
-      padding: 8px 15px;
-      box-shadow:
-        0 0 10px rgba(255, 0, 255, 0.3),
-        inset 0 0 20px rgba(0, 0, 0, 0.8);
+      background: linear-gradient(135deg, rgba(153, 255, 0, 0.9) 0%, rgba(102, 204, 0, 0.9) 100%);
+      padding: 10px 20px;
+      clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+      box-shadow: 3px 3px 0px #000;
     `;
     binContainer.innerHTML = `
       <div style="
-        color: #ff00ff;
-        font-size: 0.5rem;
-        margin-bottom: 4px;
-        text-shadow: 0 0 5px #ff00ff;
-      ">DUST BIN</div>
+        color: white;
+        font-size: 0.7rem;
+        text-shadow: 1px 1px 0px #000;
+        letter-spacing: 2px;
+        text-align: center;
+      ">DUST</div>
       <span id="bin" style="
-        color: #00ff66;
-        font-size: 1rem;
-        text-shadow:
-          0 0 10px #00ff66,
-          0 0 20px #00ff66;
+        color: white;
+        font-size: 1.5rem;
+        font-family: 'Bebas Neue', 'Impact', sans-serif;
+        text-shadow: 2px 2px 0px #000;
         letter-spacing: 2px;
       ">0/5</span>
     `;
     this.binElement = binContainer.querySelector('#bin')!;
 
-    // Pause button (arcade style)
+    // Pause button
     this.pauseButton = document.createElement('button');
-    this.pauseButton.textContent = 'II';
+    this.pauseButton.textContent = '||';
     this.pauseButton.style.cssText = `
       pointer-events: auto;
-      background: #111;
-      border: 3px solid #ff3366;
-      border-radius: 4px;
-      color: #ff3366;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.8rem;
+      background: linear-gradient(135deg, #ff0033 0%, #cc0029 100%);
+      border: none;
+      color: white;
+      font-family: 'Russo One', sans-serif;
+      font-size: 1.2rem;
+      font-weight: bold;
       width: 50px;
       height: 50px;
       cursor: pointer;
       transition: all 0.1s;
-      box-shadow:
-        0 0 10px rgba(255, 51, 102, 0.3),
-        inset 0 0 10px rgba(0, 0, 0, 0.5);
-      text-shadow: 0 0 5px #ff3366;
+      box-shadow: 3px 3px 0px #000;
+      clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
+      text-shadow: 1px 1px 0px #000;
     `;
     this.pauseButton.addEventListener('mouseenter', () => {
-      this.pauseButton.style.background = '#ff336633';
-      this.pauseButton.style.boxShadow = `
-        0 0 20px rgba(255, 51, 102, 0.5),
-        inset 0 0 15px rgba(0, 0, 0, 0.5)
-      `;
+      this.pauseButton.style.transform = 'scale(1.1)';
     });
     this.pauseButton.addEventListener('mouseleave', () => {
-      this.pauseButton.style.background = '#111';
-      this.pauseButton.style.boxShadow = `
-        0 0 10px rgba(255, 51, 102, 0.3),
-        inset 0 0 10px rgba(0, 0, 0, 0.5)
-      `;
+      this.pauseButton.style.transform = 'scale(1)';
     });
     this.pauseButton.addEventListener('click', () => {
       if (this.onPauseCallback) this.onPauseCallback();
@@ -194,41 +175,36 @@ export class HUD {
       const seconds = time % 60;
       this.timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-      // Flash red when low on time
+      // Flash when low on time
       if (time <= 10) {
-        const flash = time % 2 === 0;
-        this.timerElement.style.color = flash ? '#ff3366' : '#00ff66';
-        this.timerElement.style.textShadow = flash
-          ? '0 0 10px #ff3366, 0 0 20px #ff3366, 0 0 30px #ff3366'
-          : '0 0 10px #00ff66, 0 0 20px #00ff66';
+        this.timerElement.style.color = time % 2 === 0 ? '#ff0033' : '#ffffff';
       } else {
-        this.timerElement.style.color = '#00ff66';
-        this.timerElement.style.textShadow = '0 0 10px #00ff66, 0 0 20px #00ff66';
+        this.timerElement.style.color = '#ffffff';
       }
     } else {
-      this.timerElement.parentElement!.parentElement!.style.display = 'none';
+      this.timerElement.parentElement!.style.display = 'none';
     }
 
-    // Update score with arcade formatting
+    // Update score
     this.scoreElement.textContent = this.gameState.score.toString().padStart(6, '0');
 
     // Update bin with color coding
     this.binElement.textContent = `${binCount}/${binCapacity}`;
+    const binParent = this.binElement.parentElement!;
     if (binCount >= binCapacity) {
-      this.binElement.style.color = '#ff3366';
-      this.binElement.style.textShadow = '0 0 10px #ff3366, 0 0 20px #ff3366, 0 0 30px #ff3366';
+      binParent.style.background = 'linear-gradient(135deg, rgba(255, 0, 51, 0.9) 0%, rgba(204, 0, 41, 0.9) 100%)';
     } else if (binCount >= binCapacity - 1) {
-      this.binElement.style.color = '#ffcc00';
-      this.binElement.style.textShadow = '0 0 10px #ffcc00, 0 0 20px #ffcc00';
+      binParent.style.background = 'linear-gradient(135deg, rgba(255, 204, 0, 0.9) 0%, rgba(255, 153, 0, 0.9) 100%)';
     } else {
-      this.binElement.style.color = '#00ff66';
-      this.binElement.style.textShadow = '0 0 10px #00ff66, 0 0 20px #00ff66';
+      binParent.style.background = 'linear-gradient(135deg, rgba(153, 255, 0, 0.9) 0%, rgba(102, 204, 0, 0.9) 100%)';
     }
   }
 
   show(): void {
     this.container.style.display = 'block';
-    this.timerElement.parentElement!.parentElement!.style.display = 'block';
+    if (this.timerElement.parentElement) {
+      this.timerElement.parentElement.style.display = 'block';
+    }
   }
 
   hide(): void {
@@ -250,65 +226,40 @@ export class HUD {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.85);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       pointer-events: auto;
-      font-family: 'Press Start 2P', cursive;
-    `;
-
-    // Arcade frame
-    const frame = document.createElement('div');
-    frame.style.cssText = `
-      border: 4px solid #00ffff;
-      border-radius: 8px;
-      padding: 40px 60px;
-      background: rgba(0, 0, 0, 0.8);
-      box-shadow:
-        0 0 30px rgba(0, 255, 255, 0.3),
-        inset 0 0 30px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family: 'Russo One', 'Impact', sans-serif;
     `;
 
     const title = document.createElement('h1');
     title.textContent = 'PAUSED';
     title.style.cssText = `
-      color: #ffcc00;
-      font-size: 2rem;
+      font-family: 'Bebas Neue', 'Impact', sans-serif;
+      font-size: 4rem;
+      background: linear-gradient(180deg, #ffcc00 0%, #ff6600 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 2rem;
-      text-shadow:
-        0 0 10px #ffcc00,
-        0 0 20px #ffcc00,
-        0 0 40px #ffcc00;
-      animation: pausePulse 1s ease-in-out infinite;
+      filter: drop-shadow(3px 3px 0px #000);
+      letter-spacing: 8px;
     `;
 
-    // Add animation
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes pausePulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
-      }
-    `;
-    document.head.appendChild(style);
-
-    const resumeBtn = this.createArcadeButton('RESUME', '#00ff66', () => {
+    const resumeBtn = this.createExtremeButton('RESUME', ['#99ff00', '#66cc00'], () => {
       if (this.onResumeCallback) this.onResumeCallback();
     });
 
-    const quitBtn = this.createArcadeButton('QUIT', '#ff3366', () => {
+    const quitBtn = this.createExtremeButton('QUIT', ['#ff0033', '#cc0029'], () => {
       if (this.onQuitCallback) this.onQuitCallback();
     });
 
-    frame.appendChild(title);
-    frame.appendChild(resumeBtn);
-    frame.appendChild(quitBtn);
-    this.pauseMenu.appendChild(frame);
+    this.pauseMenu.appendChild(title);
+    this.pauseMenu.appendChild(resumeBtn);
+    this.pauseMenu.appendChild(quitBtn);
 
     this.container.appendChild(this.pauseMenu);
   }
@@ -334,108 +285,91 @@ export class HUD {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.95);
+      background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(51,0,0,0.95) 100%);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       pointer-events: auto;
-      font-family: 'Press Start 2P', cursive;
-    `;
-
-    // Arcade frame
-    const frame = document.createElement('div');
-    frame.style.cssText = `
-      border: 4px solid #ff3366;
-      border-radius: 8px;
-      padding: 40px 60px;
-      background: rgba(0, 0, 0, 0.8);
-      box-shadow:
-        0 0 30px rgba(255, 51, 102, 0.3),
-        inset 0 0 30px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family: 'Russo One', 'Impact', sans-serif;
     `;
 
     const title = document.createElement('h1');
     title.textContent = 'GAME OVER';
     title.style.cssText = `
-      color: #ff3366;
-      font-size: 2rem;
+      font-family: 'Bebas Neue', 'Impact', sans-serif;
+      font-size: 5rem;
+      background: linear-gradient(180deg, #ff0033 0%, #cc0029 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 1rem;
-      text-shadow:
-        0 0 10px #ff3366,
-        0 0 20px #ff3366,
-        0 0 40px #ff3366;
-      animation: gameOverFlash 0.5s ease-in-out infinite;
+      filter: drop-shadow(4px 4px 0px #000);
+      letter-spacing: 8px;
     `;
 
-    // Add animation
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes gameOverFlash {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
-      }
-    `;
-    document.head.appendChild(style);
-
-    const scoreText = document.createElement('p');
-    scoreText.innerHTML = `FINAL SCORE<br><span style="font-size: 1.5rem; color: #ffcc00; text-shadow: 0 0 10px #ffcc00;">${score.toString().padStart(6, '0')}</span>`;
+    const scoreText = document.createElement('div');
     scoreText.style.cssText = `
-      color: #00ffff;
-      font-size: 0.8rem;
-      margin-bottom: 1.5rem;
       text-align: center;
-      line-height: 2;
-      text-shadow: 0 0 5px #00ffff;
+      margin-bottom: 2rem;
+    `;
+    scoreText.innerHTML = `
+      <p style="color: #00ccff; font-size: 1.2rem; margin-bottom: 0.5rem; letter-spacing: 3px;">FINAL SCORE</p>
+      <p style="
+        font-family: 'Bebas Neue', 'Impact', sans-serif;
+        font-size: 3rem;
+        background: linear-gradient(180deg, #ffcc00 0%, #ff6600 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(3px 3px 0px #000);
+        letter-spacing: 5px;
+      ">${score.toString().padStart(6, '0')}</p>
     `;
 
-    frame.appendChild(title);
-    frame.appendChild(scoreText);
+    this.gameOverScreen.appendChild(title);
+    this.gameOverScreen.appendChild(scoreText);
 
     if (isHighScore) {
       const highScoreText = document.createElement('p');
       highScoreText.textContent = 'NEW HIGH SCORE!';
       highScoreText.style.cssText = `
-        color: #00ff66;
-        font-size: 0.9rem;
+        color: #99ff00;
+        font-size: 1.5rem;
         margin-bottom: 1.5rem;
-        text-shadow:
-          0 0 10px #00ff66,
-          0 0 20px #00ff66;
-        animation: highScoreBlink 0.3s step-end infinite;
+        letter-spacing: 4px;
+        text-shadow: 2px 2px 0px #000;
+        animation: pulse 0.5s ease-in-out infinite;
       `;
 
-      const blinkStyle = document.createElement('style');
-      blinkStyle.textContent = `
-        @keyframes highScoreBlink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0; }
+      // Add pulse animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
         }
       `;
-      document.head.appendChild(blinkStyle);
+      document.head.appendChild(style);
 
-      frame.appendChild(highScoreText);
+      this.gameOverScreen.appendChild(highScoreText);
 
       // Name entry
-      const nameEntry = this.createArcadeNameEntry((name) => {
+      const nameEntry = this.createNameEntry((name) => {
         onSubmit(name);
       });
-      frame.appendChild(nameEntry);
+      this.gameOverScreen.appendChild(nameEntry);
     } else {
-      const continueBtn = this.createArcadeButton('CONTINUE', '#00ffff', () => {
+      const continueBtn = this.createExtremeButton('CONTINUE', ['#00ccff', '#0066ff'], () => {
         onSubmit('');
       });
-      frame.appendChild(continueBtn);
+      this.gameOverScreen.appendChild(continueBtn);
     }
 
-    this.gameOverScreen.appendChild(frame);
     this.container.appendChild(this.gameOverScreen);
   }
 
-  private createArcadeNameEntry(onSubmit: (name: string) => void): HTMLDivElement {
+  private createNameEntry(onSubmit: (name: string) => void): HTMLDivElement {
     const container = document.createElement('div');
     container.style.cssText = `
       display: flex;
@@ -445,12 +379,12 @@ export class HUD {
     `;
 
     const label = document.createElement('p');
-    label.textContent = 'ENTER NAME';
+    label.textContent = 'ENTER YOUR NAME';
     label.style.cssText = `
-      color: #00ffff;
-      font-size: 0.6rem;
-      margin-bottom: 0.8rem;
-      text-shadow: 0 0 5px #00ffff;
+      color: #00ccff;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      letter-spacing: 3px;
     `;
 
     const input = document.createElement('input');
@@ -458,48 +392,37 @@ export class HUD {
     input.maxLength = 3;
     input.value = 'AAA';
     input.style.cssText = `
-      background: #111;
-      border: 3px solid #00ff66;
-      border-radius: 4px;
-      color: #00ff66;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 1.5rem;
+      background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4e 100%);
+      border: 4px solid #ff6600;
+      color: #ffcc00;
+      font-family: 'Bebas Neue', 'Impact', sans-serif;
+      font-size: 2.5rem;
       text-align: center;
-      width: 120px;
+      width: 150px;
       padding: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5em;
-      text-shadow: 0 0 10px #00ff66;
-      box-shadow:
-        0 0 10px rgba(0, 255, 102, 0.3),
-        inset 0 0 20px rgba(0, 0, 0, 0.8);
+      box-shadow: 4px 4px 0px #000;
     `;
 
     input.addEventListener('focus', () => {
-      input.style.boxShadow = `
-        0 0 20px rgba(0, 255, 102, 0.5),
-        inset 0 0 20px rgba(0, 0, 0, 0.8)
-      `;
+      input.style.borderColor = '#ffcc00';
     });
 
     input.addEventListener('blur', () => {
-      input.style.boxShadow = `
-        0 0 10px rgba(0, 255, 102, 0.3),
-        inset 0 0 20px rgba(0, 0, 0, 0.8)
-      `;
+      input.style.borderColor = '#ff6600';
     });
 
-    const submitBtn = this.createArcadeButton('OK', '#ffcc00', () => {
+    const submitBtn = this.createExtremeButton('OK', ['#99ff00', '#66cc00'], () => {
       const name = input.value.toUpperCase().padEnd(3, 'A').substring(0, 3);
       onSubmit(name);
     });
-    submitBtn.style.marginTop = '1rem';
+    submitBtn.style.marginTop = '1.5rem';
 
     container.appendChild(label);
     container.appendChild(input);
     container.appendChild(submitBtn);
 
-    // Auto-focus and select
     setTimeout(() => {
       input.focus();
       input.select();
@@ -515,51 +438,45 @@ export class HUD {
     }
   }
 
-  private createArcadeButton(text: string, color: string, onClick: () => void): HTMLButtonElement {
+  private createExtremeButton(text: string, colors: string[], onClick: () => void): HTMLButtonElement {
     const button = document.createElement('button');
     button.textContent = text;
     button.style.cssText = `
-      background: transparent;
-      border: 3px solid ${color};
-      border-radius: 4px;
-      color: ${color};
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.7rem;
-      padding: 12px 30px;
-      margin: 8px;
+      background: linear-gradient(90deg, ${colors[0]} 0%, ${colors[1]} 100%);
+      border: none;
+      color: white;
+      font-family: 'Russo One', 'Impact', sans-serif;
+      font-size: 1.3rem;
+      font-weight: bold;
+      padding: 15px 40px;
+      margin: 10px;
       cursor: pointer;
       transition: all 0.1s;
-      box-shadow:
-        0 0 10px ${color}66,
-        inset 0 0 15px ${color}22;
-      text-shadow: 0 0 10px ${color};
-      min-width: 160px;
+      box-shadow: 4px 4px 0px #000;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+      min-width: 200px;
     `;
 
     button.addEventListener('mouseenter', () => {
-      button.style.background = `${color}33`;
-      button.style.boxShadow = `
-        0 0 20px ${color},
-        inset 0 0 20px ${color}44
-      `;
-      button.style.transform = 'scale(1.05)';
+      button.style.transform = 'translateX(5px) scale(1.05)';
+      button.style.boxShadow = '6px 6px 0px #000';
     });
 
     button.addEventListener('mouseleave', () => {
-      button.style.background = 'transparent';
-      button.style.boxShadow = `
-        0 0 10px ${color}66,
-        inset 0 0 15px ${color}22
-      `;
-      button.style.transform = 'scale(1)';
+      button.style.transform = 'translateX(0) scale(1)';
+      button.style.boxShadow = '4px 4px 0px #000';
     });
 
     button.addEventListener('mousedown', () => {
-      button.style.transform = 'scale(0.95)';
+      button.style.transform = 'translateX(2px) scale(0.98)';
+      button.style.boxShadow = '2px 2px 0px #000';
     });
 
     button.addEventListener('mouseup', () => {
-      button.style.transform = 'scale(1.05)';
+      button.style.transform = 'translateX(5px) scale(1.05)';
     });
 
     button.addEventListener('click', onClick);

@@ -198,32 +198,22 @@ export class Game {
 
     const deltaTime = this.engine.getDeltaTime() / 1000;
 
-    // Get input
+    // Get input from keyboard and touch
     const input = this.inputSystem.getInput();
     const touchInput = this.touchControls.getInput();
 
-    // Combine movement inputs (touch overrides keyboard if active)
-    const finalInput = touchInput.active ? touchInput : input;
-
-    // Combine camera inputs from both sources
-    const cameraInput = {
-      x: (touchInput.cameraX || 0) + (input.cameraX || 0),
-      y: (touchInput.cameraY || 0) + (input.cameraY || 0),
+    // Combine inputs: touch overrides keyboard if active, otherwise add them
+    const finalInput = {
+      forward: touchInput.active ? touchInput.forward : input.forward,
+      turn: touchInput.active ? touchInput.turn : input.turn,
+      active: touchInput.active || input.active,
     };
 
-    // Get camera angle for directional movement relative to camera view
-    const cameraAngle = this.thirdPersonCamera.getHorizontalAngle();
+    // Update roomba with twin-stick controls
+    this.roomba.update(deltaTime, finalInput);
 
-    // Update roomba with camera-relative movement
-    this.roomba.update(deltaTime, {
-      forward: finalInput.forward,
-      strafe: finalInput.strafe,
-      cameraAngle: cameraAngle,
-      active: finalInput.active,
-    });
-
-    // Update camera with input
-    this.thirdPersonCamera.update(deltaTime, cameraInput);
+    // Update camera (auto-follow, no manual input needed)
+    this.thirdPersonCamera.update(deltaTime);
 
     // Check for dust collection
     const collectedDust = this.dustSpawner.checkCollection(

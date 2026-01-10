@@ -1,10 +1,8 @@
 import { Scene, KeyboardEventTypes } from '@babylonjs/core';
 
 export interface InputState {
-  forward: number; // -1 to 1 (relative to camera: forward/back)
-  strafe: number; // -1 to 1 (relative to camera: left/right)
-  cameraX: number; // -1 to 1 (horizontal rotation)
-  cameraY: number; // -1 to 1 (zoom/tilt)
+  forward: number; // -1 to 1 (throttle: forward/back)
+  turn: number; // -1 to 1 (steering: left/right)
   pause: boolean;
   active: boolean;
 }
@@ -102,9 +100,7 @@ export class InputSystem {
 
   getInput(): InputState {
     let forward = 0;
-    let strafe = 0;
-    let cameraX = 0;
-    let cameraY = 0;
+    let turn = 0;
 
     // Forward/backward (W/S or Up/Down arrows)
     if (this.isKeyPressed('w') || this.isKeyPressed('arrowup')) {
@@ -113,25 +109,14 @@ export class InputSystem {
       forward = -1;
     }
 
-    // Strafe left/right (A/D or Left/Right arrows)
+    // Turn left/right (A/D or Left/Right arrows)
     if (this.isKeyPressed('a') || this.isKeyPressed('arrowleft')) {
-      strafe = -1;
+      turn = 1; // Turn left (positive rotation)
     } else if (this.isKeyPressed('d') || this.isKeyPressed('arrowright')) {
-      strafe = 1;
+      turn = -1; // Turn right (negative rotation)
     }
 
-    // Camera rotation with Q/E keys
-    if (this.isKeyPressed('q')) {
-      cameraX = -1;
-    } else if (this.isKeyPressed('e')) {
-      cameraX = 1;
-    }
-
-    // Add mouse drag to camera (accumulated delta)
-    cameraX += this.mouseDeltaX;
-    cameraY += this.mouseDeltaY + this.mouseWheelDelta;
-
-    // Reset mouse deltas after reading
+    // Reset mouse deltas (not used for movement anymore)
     this.mouseDeltaX = 0;
     this.mouseDeltaY = 0;
     this.mouseWheelDelta = 0;
@@ -142,11 +127,9 @@ export class InputSystem {
 
     return {
       forward,
-      strafe,
-      cameraX,
-      cameraY,
+      turn,
       pause,
-      active: forward !== 0 || strafe !== 0,
+      active: forward !== 0 || turn !== 0,
     };
   }
 
