@@ -7,7 +7,6 @@ import {
   Mesh,
   PhysicsAggregate,
   PhysicsShapeType,
-  TransformNode,
 } from '@babylonjs/core';
 import { CollectedDust } from '../game/GameState';
 
@@ -24,16 +23,19 @@ export class Roomba {
   private binBar: Mesh;
   private binBarFill: Mesh;
   private physicsAggregate: PhysicsAggregate;
-  private transform: TransformNode;
 
-  private speed: number = 5;
+  private speed: number = 8;
   private turnSpeed: number = 3;
   private rotation: number = 0;
   private velocity: Vector3 = Vector3.Zero();
 
   private binCapacity: number = 5;
   private binContents: CollectedDust[] = [];
-  private collectionRadius: number = 1;
+  private collectionRadius: number = 0.8;
+
+  // Roomba size - realistic scale (about 35cm diameter in a ~5m room)
+  private diameter: number = 0.5;
+  private height: number = 0.15;
 
   private startPosition: Vector3;
 
@@ -45,24 +47,20 @@ export class Roomba {
     this.binBar = null!;
     this.binBarFill = null!;
     this.physicsAggregate = null!;
-    this.transform = null!;
   }
 
   async create(): Promise<void> {
-    // Create transform node to group all parts
-    this.transform = new TransformNode('roombaTransform', this.scene);
-
-    // Main body - flat cylinder
+    // Main body - flat cylinder (this is the physics root)
     this.body = MeshBuilder.CreateCylinder(
       'roombaBody',
       {
-        diameter: 1,
-        height: 0.25,
+        diameter: this.diameter,
+        height: this.height,
         tessellation: 32,
       },
       this.scene
     );
-    this.body.parent = this.transform;
+    this.body.position = this.startPosition.clone();
 
     const bodyMaterial = new StandardMaterial('roombaMat', this.scene);
     bodyMaterial.diffuseColor = new Color3(0.2, 0.2, 0.22);
@@ -73,14 +71,14 @@ export class Roomba {
     const ring = MeshBuilder.CreateTorus(
       'roombaRing',
       {
-        diameter: 0.9,
-        thickness: 0.05,
+        diameter: this.diameter * 0.9,
+        thickness: 0.025,
         tessellation: 32,
       },
       this.scene
     );
-    ring.position.y = 0.1;
-    ring.parent = this.transform;
+    ring.position.y = this.height * 0.4;
+    ring.parent = this.body;
 
     const ringMaterial = new StandardMaterial('ringMat', this.scene);
     ringMaterial.diffuseColor = new Color3(0.3, 0.3, 0.35);
@@ -89,11 +87,11 @@ export class Roomba {
     // LED indicator light
     this.led = MeshBuilder.CreateSphere(
       'roombaLed',
-      { diameter: 0.1 },
+      { diameter: 0.05 },
       this.scene
     );
-    this.led.position = new Vector3(0.35, 0.15, 0);
-    this.led.parent = this.transform;
+    this.led.position = new Vector3(this.diameter * 0.35, this.height * 0.5, 0);
+    this.led.parent = this.body;
 
     const ledMaterial = new StandardMaterial('ledMat', this.scene);
     ledMaterial.diffuseColor = new Color3(0, 1, 0);
@@ -103,11 +101,11 @@ export class Roomba {
     // Direction indicator (front bump)
     const front = MeshBuilder.CreateBox(
       'roombaFront',
-      { width: 0.6, height: 0.15, depth: 0.1 },
+      { width: this.diameter * 0.6, height: this.height * 0.6, depth: 0.05 },
       this.scene
     );
-    front.position = new Vector3(0, 0, 0.45);
-    front.parent = this.transform;
+    front.position = new Vector3(0, 0, this.diameter * 0.45);
+    front.parent = this.body;
 
     const frontMaterial = new StandardMaterial('frontMat', this.scene);
     frontMaterial.diffuseColor = new Color3(0.15, 0.15, 0.17);
@@ -116,11 +114,11 @@ export class Roomba {
     // Bin capacity bar (background)
     this.binBar = MeshBuilder.CreateBox(
       'binBar',
-      { width: 0.6, height: 0.08, depth: 0.08 },
+      { width: 0.4, height: 0.05, depth: 0.05 },
       this.scene
     );
-    this.binBar.position = new Vector3(0, 0.5, 0);
-    this.binBar.parent = this.transform;
+    this.binBar.position = new Vector3(0, 0.4, 0);
+    this.binBar.parent = this.body;
 
     const binBarMaterial = new StandardMaterial('binBarMat', this.scene);
     binBarMaterial.diffuseColor = new Color3(0.3, 0.3, 0.3);
@@ -129,11 +127,11 @@ export class Roomba {
     // Bin capacity bar (fill)
     this.binBarFill = MeshBuilder.CreateBox(
       'binBarFill',
-      { width: 0.58, height: 0.06, depth: 0.06 },
+      { width: 0.38, height: 0.04, depth: 0.04 },
       this.scene
     );
-    this.binBarFill.position = new Vector3(0, 0.5, 0);
-    this.binBarFill.parent = this.transform;
+    this.binBarFill.position = new Vector3(0, 0.4, 0);
+    this.binBarFill.parent = this.body;
 
     const fillMaterial = new StandardMaterial('fillMat', this.scene);
     fillMaterial.diffuseColor = new Color3(0.2, 0.8, 0.2);
@@ -141,22 +139,19 @@ export class Roomba {
     this.binBarFill.material = fillMaterial;
     this.binBarFill.scaling.x = 0;
 
-    // Set initial position
-    this.transform.position = this.startPosition.clone();
-
-    // Add physics
+    // Add physics to the body mesh directly
     this.physicsAggregate = new PhysicsAggregate(
       this.body,
       PhysicsShapeType.CYLINDER,
       {
         mass: 1,
-        friction: 0.5,
-        restitution: 0.5,
+        friction: 0.8,
+        restitution: 0.3,
       },
       this.scene
     );
 
-    // Constrain rotation to only Y axis
+    // Constrain to only rotate on Y axis (no tipping over)
     this.physicsAggregate.body.setMassProperties({
       inertia: new Vector3(0, 1, 0),
     });
@@ -177,17 +172,14 @@ export class Roomba {
     const targetVelocity = forward.scale(input.forward * this.speed);
     this.velocity = Vector3.Lerp(this.velocity, targetVelocity, 0.1);
 
-    // Update physics body velocity
+    // Update physics body velocity (preserve Y for gravity)
     const currentVel = this.physicsAggregate.body.getLinearVelocity();
     this.physicsAggregate.body.setLinearVelocity(
       new Vector3(this.velocity.x, currentVel.y, this.velocity.z)
     );
 
-    // Update visual rotation
-    this.transform.rotation.y = this.rotation;
-
-    // Sync transform with physics
-    this.transform.position = this.body.position.clone();
+    // Update visual rotation (physics handles position)
+    this.body.rotation.y = this.rotation;
 
     // Update bin bar
     this.updateBinBar();
@@ -201,7 +193,7 @@ export class Roomba {
     this.binBarFill.scaling.x = fillPercent;
 
     // Adjust position so bar fills from left to right
-    const offset = (1 - fillPercent) * 0.29;
+    const offset = (1 - fillPercent) * 0.19;
     this.binBarFill.position.x = -offset;
 
     // Update color based on fill level
@@ -257,7 +249,7 @@ export class Roomba {
   }
 
   getPosition(): Vector3 {
-    return this.transform.position.clone();
+    return this.body.position.clone();
   }
 
   getRotation(): number {
@@ -273,7 +265,6 @@ export class Roomba {
   }
 
   reset(position: Vector3): void {
-    this.transform.position = position.clone();
     this.body.position = position.clone();
     this.rotation = 0;
     this.velocity = Vector3.Zero();
