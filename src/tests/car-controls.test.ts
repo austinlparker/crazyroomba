@@ -1,19 +1,19 @@
 import { describe, it, expect } from 'vitest';
 
 /**
- * Car-Style Control Specification:
+ * Roomba Control Specification:
  *
- * Unlike tank controls where the vehicle can turn in place,
- * car-style controls require movement for turning:
- * - A/D or Left/Right: Steering angle (how much the wheels are turned)
+ * Roomba uses differential drive (two independent wheels) allowing:
+ * - Zero-point turning: Can rotate in place without forward/backward movement
+ * - A/D or Left/Right: Rotation (direct steering)
  * - W/S or Up/Down: Throttle (forward/reverse)
- * - Turning only happens while moving (like a real car)
- * - Turn rate is proportional to speed (faster = tighter turns, up to a limit)
+ * - Smooth acceleration/deceleration with friction
  *
  * Camera Behavior:
  * - Trails behind the roomba with significant lag
  * - Positioned to show what's AHEAD of the roomba
  * - Lower viewing angle (more horizontal) to see the environment
+ * - Player can see the roomba rotate before camera catches up
  */
 
 interface InputState {
@@ -34,15 +34,13 @@ interface CameraState {
   radius: number;        // Distance from target
 }
 
-// Constants for car physics
-const CAR_PHYSICS = {
+// Constants for roomba physics (differential drive)
+const ROOMBA_PHYSICS = {
   maxSpeed: 8,
   acceleration: 12,
   deceleration: 8,
   friction: 4,           // Speed reduction when no input
-  turnRate: 2.5,         // Base turn rate
-  minSpeedForTurn: 0.5,  // Minimum speed needed to turn
-  maxTurnAtSpeed: 4,     // Speed at which max turn rate is achieved
+  turnRate: 3,           // Turn rate (works at any speed, including stationary)
 };
 
 // Constants for trailing camera
@@ -54,12 +52,12 @@ const CAMERA_SETTINGS = {
 };
 
 /**
- * Car-style physics update:
+ * Roomba physics update (differential drive):
  * - Acceleration/deceleration based on throttle
- * - Turning only happens while moving
- * - Turn rate scales with speed
+ * - Can turn in place (zero-point turning) - no minimum speed required
+ * - Constant turn rate regardless of speed
  */
-function updateCarPhysics(
+function updateRoombaPhysics(
   state: RoombaState,
   input: InputState,
   deltaTime: number
@@ -68,13 +66,13 @@ function updateCarPhysics(
 
   // Apply throttle (acceleration/deceleration)
   if (input.forward > 0) {
-    newSpeed += CAR_PHYSICS.acceleration * input.forward * deltaTime;
+    newSpeed += ROOMBA_PHYSICS.acceleration * input.forward * deltaTime;
   } else if (input.forward < 0) {
-    newSpeed += CAR_PHYSICS.deceleration * input.forward * deltaTime;
+    newSpeed += ROOMBA_PHYSICS.deceleration * input.forward * deltaTime;
   } else {
     // Apply friction when no input
     if (Math.abs(newSpeed) > 0.01) {
-      const frictionForce = CAR_PHYSICS.friction * deltaTime;
+      const frictionForce = ROOMBA_PHYSICS.friction * deltaTime;
       if (newSpeed > 0) {
         newSpeed = Math.max(0, newSpeed - frictionForce);
       } else {
@@ -86,24 +84,12 @@ function updateCarPhysics(
   }
 
   // Clamp speed
-  newSpeed = Math.max(-CAR_PHYSICS.maxSpeed * 0.5, Math.min(CAR_PHYSICS.maxSpeed, newSpeed));
+  newSpeed = Math.max(-ROOMBA_PHYSICS.maxSpeed * 0.5, Math.min(ROOMBA_PHYSICS.maxSpeed, newSpeed));
 
-  // Calculate turn rate based on speed
-  // Only turn if moving above minimum speed
+  // Differential drive: can turn at any speed, including stationary
   let newRotation = state.rotation;
-  const absSpeed = Math.abs(newSpeed);
-
-  if (absSpeed >= CAR_PHYSICS.minSpeedForTurn && input.turn !== 0) {
-    // Turn rate increases with speed up to a point, then stays constant
-    const speedFactor = Math.min(absSpeed / CAR_PHYSICS.maxTurnAtSpeed, 1);
-    const turnAmount = input.turn * CAR_PHYSICS.turnRate * speedFactor * deltaTime;
-
-    // Reverse steering when going backwards (like a real car)
-    if (newSpeed < 0) {
-      newRotation -= turnAmount;
-    } else {
-      newRotation += turnAmount;
-    }
+  if (input.turn !== 0) {
+    newRotation += input.turn * ROOMBA_PHYSICS.turnRate * deltaTime;
   }
 
   // Calculate new position based on speed and rotation
@@ -152,9 +138,9 @@ function updateTrailingCamera(
   };
 }
 
-describe('Car-Style Steering Physics', () => {
-  describe('Turning requires movement', () => {
-    it('should NOT turn when stationary, even with steering input', () => {
+describe('Roomba Steering Physics (Differential Drive)', () => {
+  describe('Zero-point turning', () => {
+    it('should turn when stationary (zero-point turn)', () => {
       const state: RoombaState = {
         rotation: 0,
         speed: 0,
@@ -162,99 +148,84 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: 0, turn: 1, active: true };
 
-      const result = updateCarPhysics(state, input, 0.016);
+      const result = updateRoombaPhysics(state, input, 0.016);
 
-      // Rotation should not change when stationary
-      expect(result.rotation).toBe(0);
-    });
-
-    it('should NOT turn when moving very slowly (below threshold)', () => {
-      const state: RoombaState = {
-        rotation: 0,
-        speed: 0.3, // Below minSpeedForTurn (0.5)
-        position: { x: 0, z: 0 },
-      };
-      const input: InputState = { forward: 0, turn: 1, active: true };
-
-      const result = updateCarPhysics(state, input, 0.016);
-
-      expect(result.rotation).toBe(0);
-    });
-
-    it('should turn when moving above minimum speed', () => {
-      const state: RoombaState = {
-        rotation: 0,
-        speed: 4, // Well above minimum
-        position: { x: 0, z: 0 },
-      };
-      const input: InputState = { forward: 0, turn: 1, active: true };
-
-      const result = updateCarPhysics(state, input, 0.016);
-
-      // Should have turned right (positive rotation)
+      // Roomba CAN turn in place - differential drive allows this
       expect(result.rotation).toBeGreaterThan(0);
+    });
+
+    it('should turn at any speed', () => {
+      const stationaryState: RoombaState = {
+        rotation: 0,
+        speed: 0,
+        position: { x: 0, z: 0 },
+      };
+      const movingState: RoombaState = {
+        rotation: 0,
+        speed: 4,
+        position: { x: 0, z: 0 },
+      };
+      const input: InputState = { forward: 0, turn: 1, active: true };
+
+      const stationaryResult = updateRoombaPhysics(stationaryState, input, 0.016);
+      const movingResult = updateRoombaPhysics(movingState, input, 0.016);
+
+      // Both should turn
+      expect(stationaryResult.rotation).toBeGreaterThan(0);
+      expect(movingResult.rotation).toBeGreaterThan(0);
     });
 
     it('should turn left with negative steering input', () => {
       const state: RoombaState = {
         rotation: 0,
-        speed: 4,
+        speed: 0,
         position: { x: 0, z: 0 },
       };
       const input: InputState = { forward: 0, turn: -1, active: true };
 
-      const result = updateCarPhysics(state, input, 0.016);
+      const result = updateRoombaPhysics(state, input, 0.016);
 
       expect(result.rotation).toBeLessThan(0);
     });
-  });
 
-  describe('Turn rate scales with speed', () => {
-    it('should turn faster at higher speeds (up to max)', () => {
-      const slowState: RoombaState = {
+    it('should turn right with positive steering input', () => {
+      const state: RoombaState = {
         rotation: 0,
-        speed: 1,
-        position: { x: 0, z: 0 },
-      };
-      const fastState: RoombaState = {
-        rotation: 0,
-        speed: 4,
+        speed: 0,
         position: { x: 0, z: 0 },
       };
       const input: InputState = { forward: 0, turn: 1, active: true };
 
-      const slowResult = updateCarPhysics(slowState, input, 0.016);
-      const fastResult = updateCarPhysics(fastState, input, 0.016);
+      const result = updateRoombaPhysics(state, input, 0.016);
 
-      // Faster speed = more turning
-      expect(Math.abs(fastResult.rotation)).toBeGreaterThan(Math.abs(slowResult.rotation));
+      expect(result.rotation).toBeGreaterThan(0);
     });
+  });
 
-    it('should cap turn rate at very high speeds', () => {
-      const fastState: RoombaState = {
+  describe('Constant turn rate', () => {
+    it('should have same turn rate regardless of speed', () => {
+      const stationaryState: RoombaState = {
         rotation: 0,
-        speed: 6,
+        speed: 0,
         position: { x: 0, z: 0 },
       };
-      const veryFastState: RoombaState = {
+      const fastState: RoombaState = {
         rotation: 0,
-        speed: 8, // Max speed
+        speed: 8,
         position: { x: 0, z: 0 },
       };
       const input: InputState = { forward: 0, turn: 1, active: true };
 
-      const fastResult = updateCarPhysics(fastState, input, 0.016);
-      const veryFastResult = updateCarPhysics(veryFastState, input, 0.016);
+      const stationaryResult = updateRoombaPhysics(stationaryState, input, 0.016);
+      const fastResult = updateRoombaPhysics(fastState, input, 0.016);
 
-      // Turn rates should be similar at high speeds (capped)
-      // Allow for some difference due to speed factor calculation
-      const turnDiff = Math.abs(veryFastResult.rotation - fastResult.rotation);
-      expect(turnDiff).toBeLessThan(0.01);
+      // Turn rate should be the same regardless of speed
+      expect(stationaryResult.rotation).toBeCloseTo(fastResult.rotation);
     });
   });
 
-  describe('Reverse steering', () => {
-    it('should reverse steering direction when going backwards', () => {
+  describe('Steering direction', () => {
+    it('should maintain consistent steering direction regardless of movement direction', () => {
       const forwardState: RoombaState = {
         rotation: 0,
         speed: 3,
@@ -267,13 +238,14 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: 0, turn: 1, active: true }; // Steer right
 
-      const forwardResult = updateCarPhysics(forwardState, input, 0.016);
-      const reverseResult = updateCarPhysics(reverseState, input, 0.016);
+      const forwardResult = updateRoombaPhysics(forwardState, input, 0.016);
+      const reverseResult = updateRoombaPhysics(reverseState, input, 0.016);
 
-      // When going forward, steering right = rotate positive
+      // Differential drive: steering is always the same direction
+      // (unlike a car where reverse reverses steering)
       expect(forwardResult.rotation).toBeGreaterThan(0);
-      // When going reverse, steering right = rotate negative (opposite)
-      expect(reverseResult.rotation).toBeLessThan(0);
+      expect(reverseResult.rotation).toBeGreaterThan(0);
+      expect(forwardResult.rotation).toBeCloseTo(reverseResult.rotation);
     });
   });
 
@@ -286,7 +258,7 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: 1, turn: 0, active: true };
 
-      const result = updateCarPhysics(state, input, 0.1);
+      const result = updateRoombaPhysics(state, input, 0.1);
 
       expect(result.speed).toBeGreaterThan(0);
     });
@@ -299,7 +271,7 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: -1, turn: 0, active: true };
 
-      const result = updateCarPhysics(state, input, 0.1);
+      const result = updateRoombaPhysics(state, input, 0.1);
 
       expect(result.speed).toBeLessThan(4);
     });
@@ -312,7 +284,7 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: 0, turn: 0, active: false };
 
-      const result = updateCarPhysics(state, input, 0.1);
+      const result = updateRoombaPhysics(state, input, 0.1);
 
       // Should slow down due to friction
       expect(result.speed).toBeLessThan(4);
@@ -327,9 +299,9 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: 1, turn: 0, active: true };
 
-      const result = updateCarPhysics(state, input, 1); // Long deltaTime to exceed max
+      const result = updateRoombaPhysics(state, input, 1); // Long deltaTime to exceed max
 
-      expect(result.speed).toBeLessThanOrEqual(CAR_PHYSICS.maxSpeed);
+      expect(result.speed).toBeLessThanOrEqual(ROOMBA_PHYSICS.maxSpeed);
     });
 
     it('should allow reverse but at reduced max speed', () => {
@@ -340,10 +312,10 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: -1, turn: 0, active: true };
 
-      const result = updateCarPhysics(state, input, 1); // Long deltaTime
+      const result = updateRoombaPhysics(state, input, 1); // Long deltaTime
 
       // Reverse max is half of forward max
-      expect(result.speed).toBeGreaterThanOrEqual(-CAR_PHYSICS.maxSpeed * 0.5);
+      expect(result.speed).toBeGreaterThanOrEqual(-ROOMBA_PHYSICS.maxSpeed * 0.5);
     });
   });
 
@@ -356,7 +328,7 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: 0, turn: 0, active: false };
 
-      const result = updateCarPhysics(state, input, 0.1);
+      const result = updateRoombaPhysics(state, input, 0.1);
 
       // Should have moved in +Z direction
       expect(result.position.z).toBeGreaterThan(0);
@@ -371,7 +343,7 @@ describe('Car-Style Steering Physics', () => {
       };
       const input: InputState = { forward: 0, turn: 0, active: false };
 
-      const result = updateCarPhysics(state, input, 0.1);
+      const result = updateRoombaPhysics(state, input, 0.1);
 
       // Should have moved in +X direction
       expect(result.position.x).toBeGreaterThan(0);
@@ -505,7 +477,7 @@ describe('Combined Car Controls + Camera Integration', () => {
 
     // Simulate several frames of turning
     for (let i = 0; i < 10; i++) {
-      roombaState = updateCarPhysics(roombaState, turnInput, 0.016);
+      roombaState = updateRoombaPhysics(roombaState, turnInput, 0.016);
       cameraState = updateTrailingCamera(cameraState, roombaState.rotation, 0.016);
     }
 

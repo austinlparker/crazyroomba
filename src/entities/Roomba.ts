@@ -25,17 +25,15 @@ export class Roomba {
   private sideBrush: Mesh;
   private physicsAggregate: PhysicsAggregate;
 
-  // Car-style physics constants
+  // Roomba physics constants (differential drive - can turn in place)
   private maxSpeed: number = 8;
   private maxReverseSpeed: number = 4;        // Half of forward speed
   private acceleration: number = 12;
   private deceleration: number = 8;
   private friction: number = 4;               // Speed reduction when no input
-  private turnRate: number = 2.5;             // Base turn rate
-  private minSpeedForTurn: number = 0.5;      // Minimum speed needed to turn
-  private maxTurnAtSpeed: number = 4;         // Speed at which max turn rate is achieved
+  private turnRate: number = 3;               // Turn rate (works at any speed, including stationary)
 
-  // Car-style state
+  // Roomba state
   private currentSpeed: number = 0;           // Current forward speed (can be negative)
   private rotation: number = 0;
   private velocity: Vector3 = Vector3.Zero();
@@ -394,19 +392,9 @@ export class Roomba {
       // Clamp speed
       this.currentSpeed = Math.max(-this.maxReverseSpeed, Math.min(this.maxSpeed, this.currentSpeed));
 
-      // Car-style steering: only turn when moving
-      const absSpeed = Math.abs(this.currentSpeed);
-      if (absSpeed >= this.minSpeedForTurn && input.turn !== 0) {
-        // Turn rate increases with speed up to a point, then stays constant
-        const speedFactor = Math.min(absSpeed / this.maxTurnAtSpeed, 1);
-        const turnAmount = input.turn * this.turnRate * speedFactor * deltaTime;
-
-        // Reverse steering when going backwards (like a real car)
-        if (this.currentSpeed < 0) {
-          this.rotation -= turnAmount;
-        } else {
-          this.rotation += turnAmount;
-        }
+      // Differential drive steering: can turn at any speed, including stationary
+      if (input.turn !== 0) {
+        this.rotation += input.turn * this.turnRate * deltaTime;
       }
 
       // Calculate forward vector based on current rotation
