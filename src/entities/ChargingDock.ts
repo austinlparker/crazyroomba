@@ -16,7 +16,7 @@ export class ChargingDock {
   private backPanel: Mesh;
   private ringMesh: Mesh;
   private glowRing: Mesh;
-  private depositRange: number = 1.5;
+  private depositRange: number = 0.7;
   private glowLayer: GlowLayer;
 
   constructor(scene: Scene, position: Vector3) {
@@ -34,18 +34,18 @@ export class ChargingDock {
     this.glowLayer = new GlowLayer('dockGlow', this.scene);
     this.glowLayer.intensity = 0.6;
 
-    // Base platform - wider and flatter like real dock
+    // Base platform - wider and flatter like real dock (scaled to match roomba)
     this.baseMesh = MeshBuilder.CreateBox(
       'dockBase',
       {
-        width: 1.2,
-        height: 0.04,
-        depth: 0.8,
+        width: 0.56,
+        height: 0.02,
+        depth: 0.37,
       },
       this.scene
     );
     this.baseMesh.position = this.position.clone();
-    this.baseMesh.position.y = 0.02;
+    this.baseMesh.position.y = 0.01;
 
     const baseMaterial = new StandardMaterial('dockBaseMat', this.scene);
     baseMaterial.diffuseColor = new Color3(0.12, 0.12, 0.15);
@@ -56,15 +56,15 @@ export class ChargingDock {
     this.backPanel = MeshBuilder.CreateBox(
       'dockBack',
       {
-        width: 1.0,
-        height: 0.3,
-        depth: 0.08,
+        width: 0.47,
+        height: 0.14,
+        depth: 0.04,
       },
       this.scene
     );
     this.backPanel.position = this.position.clone();
-    this.backPanel.position.y = 0.15;
-    this.backPanel.position.z = -0.35;
+    this.backPanel.position.y = 0.07;
+    this.backPanel.position.z = -0.16;
 
     const backMaterial = new StandardMaterial('dockBackMat', this.scene);
     backMaterial.diffuseColor = new Color3(0.15, 0.15, 0.18);
@@ -76,16 +76,16 @@ export class ChargingDock {
       const contact = MeshBuilder.CreateBox(
         `contact_${i}`,
         {
-          width: 0.08,
-          height: 0.15,
-          depth: 0.02,
+          width: 0.04,
+          height: 0.07,
+          depth: 0.01,
         },
         this.scene
       );
       contact.position = this.position.clone();
-      contact.position.x += i * 0.25;
-      contact.position.y = 0.1;
-      contact.position.z = -0.32;
+      contact.position.x += i * 0.12;
+      contact.position.y = 0.05;
+      contact.position.z = -0.15;
 
       const contactMaterial = new StandardMaterial(`contactMat_${i}`, this.scene);
       contactMaterial.diffuseColor = new Color3(0.7, 0.65, 0.5); // Brass/copper color
@@ -97,15 +97,15 @@ export class ChargingDock {
     const beacon = MeshBuilder.CreateCylinder(
       'beacon',
       {
-        diameter: 0.12,
-        height: 0.04,
+        diameter: 0.056,
+        height: 0.02,
         tessellation: 16,
       },
       this.scene
     );
     beacon.position = this.position.clone();
-    beacon.position.y = 0.32;
-    beacon.position.z = -0.35;
+    beacon.position.y = 0.15;
+    beacon.position.z = -0.16;
 
     const beaconMaterial = new StandardMaterial('beaconMat', this.scene);
     beaconMaterial.diffuseColor = new Color3(0.2, 0.2, 0.25);
@@ -115,15 +115,15 @@ export class ChargingDock {
     const irWindow = MeshBuilder.CreateCylinder(
       'irWindow',
       {
-        diameter: 0.08,
-        height: 0.02,
+        diameter: 0.037,
+        height: 0.01,
         tessellation: 16,
       },
       this.scene
     );
     irWindow.position = this.position.clone();
-    irWindow.position.y = 0.34;
-    irWindow.position.z = -0.35;
+    irWindow.position.y = 0.16;
+    irWindow.position.z = -0.16;
 
     const irMaterial = new StandardMaterial('irMat', this.scene);
     irMaterial.diffuseColor = new Color3(0.15, 0.05, 0.05);
@@ -134,14 +134,14 @@ export class ChargingDock {
     this.ringMesh = MeshBuilder.CreateTorus(
       'dockRing',
       {
-        diameter: 0.6,
-        thickness: 0.03,
+        diameter: 0.28,
+        thickness: 0.014,
         tessellation: 32,
       },
       this.scene
     );
     this.ringMesh.position = this.position.clone();
-    this.ringMesh.position.y = 0.05;
+    this.ringMesh.position.y = 0.023;
     this.ringMesh.rotation.x = Math.PI / 2;
 
     const ringMaterial = new StandardMaterial('dockRingMat', this.scene);
@@ -157,13 +157,13 @@ export class ChargingDock {
       'dockGlowRing',
       {
         diameter: this.depositRange * 2,
-        thickness: 0.015,
+        thickness: 0.007,
         tessellation: 64,
       },
       this.scene
     );
     this.glowRing.position = this.position.clone();
-    this.glowRing.position.y = 0.005;
+    this.glowRing.position.y = 0.002;
     this.glowRing.rotation.x = Math.PI / 2;
 
     const glowRingMaterial = new StandardMaterial('glowRingMat', this.scene);
@@ -176,15 +176,15 @@ export class ChargingDock {
     const label = MeshBuilder.CreateBox(
       'dockLabel',
       {
-        width: 0.3,
-        height: 0.06,
-        depth: 0.01,
+        width: 0.14,
+        height: 0.028,
+        depth: 0.005,
       },
       this.scene
     );
     label.position = this.position.clone();
-    label.position.y = 0.22;
-    label.position.z = -0.3;
+    label.position.y = 0.103;
+    label.position.z = -0.14;
 
     const labelMaterial = new StandardMaterial('labelMat', this.scene);
     labelMaterial.diffuseColor = new Color3(0.9, 0.9, 0.9);
@@ -195,15 +195,15 @@ export class ChargingDock {
       const grip = MeshBuilder.CreateBox(
         `grip_${i}`,
         {
-          width: 0.8,
-          height: 0.01,
-          depth: 0.04,
+          width: 0.37,
+          height: 0.005,
+          depth: 0.019,
         },
         this.scene
       );
       grip.position = this.position.clone();
-      grip.position.y = 0.005;
-      grip.position.z = i * 0.25;
+      grip.position.y = 0.002;
+      grip.position.z = i * 0.12;
 
       const gripMaterial = new StandardMaterial(`gripMat_${i}`, this.scene);
       gripMaterial.diffuseColor = new Color3(0.08, 0.08, 0.08);
