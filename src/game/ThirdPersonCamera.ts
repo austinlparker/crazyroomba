@@ -8,28 +8,32 @@ import { Roomba } from '../entities/Roomba';
 export class ThirdPersonCamera {
   private camera: ArcRotateCamera;
   private roomba: Roomba;
-  private targetOffset: Vector3 = new Vector3(0, 0.1, 0); // Slight offset for target point
+  private targetOffset: Vector3 = new Vector3(0, 0.3, 0); // Offset for target point (raised)
   private currentAlpha: number = Math.PI; // Smoothed camera rotation
-  private rotationSmoothing: number = 0.25; // How quickly camera catches up to roomba rotation
+
+  // Trailing camera settings for car-style controls
+  private rotationSmoothing: number = 0.08; // Much slower follow for trailing effect (was 0.25)
+  private cameraRadius: number = 2.5;       // Further back to see environment (was 1.2)
+  private cameraBeta: number = Math.PI / 4; // 45 degrees - more horizontal to see ahead (was PI/3.5)
 
   constructor(scene: Scene, canvas: HTMLCanvasElement, roomba: Roomba) {
     this.roomba = roomba;
 
-    // Create arc rotate camera - tight overhead view behind roomba
+    // Create arc rotate camera - trailing view behind roomba for car-style controls
     this.camera = new ArcRotateCamera(
       'thirdPersonCamera',
       Math.PI, // alpha - horizontal rotation (behind roomba)
-      Math.PI / 3.5, // beta - more overhead angle (~51 degrees from vertical)
-      1.2, // radius - very close for tight view
+      this.cameraBeta, // beta - 45 degrees for better forward visibility
+      this.cameraRadius, // radius - further back to see environment
       roomba.getPosition(),
       scene
     );
 
     // Fixed camera settings - no zoom allowed
-    this.camera.lowerRadiusLimit = 1.2;
-    this.camera.upperRadiusLimit = 1.2;
-    this.camera.lowerBetaLimit = Math.PI / 3.5;
-    this.camera.upperBetaLimit = Math.PI / 3.5;
+    this.camera.lowerRadiusLimit = this.cameraRadius;
+    this.camera.upperRadiusLimit = this.cameraRadius;
+    this.camera.lowerBetaLimit = this.cameraBeta;
+    this.camera.upperBetaLimit = this.cameraBeta;
 
     // Enable camera collision detection
     this.camera.checkCollisions = true;
@@ -82,6 +86,7 @@ export class ThirdPersonCamera {
   }
 
   setRadius(radius: number): void {
+    this.cameraRadius = radius;
     this.camera.radius = radius;
     this.camera.lowerRadiusLimit = radius;
     this.camera.upperRadiusLimit = radius;
