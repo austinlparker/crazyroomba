@@ -573,6 +573,14 @@ export class Roomba {
     return this.collectionRadius;
   }
 
+  getDiameter(): number {
+    return this.diameter;
+  }
+
+  getHeight(): number {
+    return this.height;
+  }
+
   getMesh(): Mesh {
     return this.body;
   }
