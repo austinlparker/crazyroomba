@@ -137,6 +137,8 @@ export class Game {
 
     // Set up third-person camera
     this.thirdPersonCamera = new ThirdPersonCamera(this.scene, this.canvas, this.roomba);
+    // Pass wall meshes for camera collision detection
+    this.thirdPersonCamera.setWallMeshes(this.house.getWallMeshes());
 
     // Create dust spawner
     this.dustSpawner = new DustSpawner(
@@ -232,6 +234,8 @@ export class Game {
       if (this.roomba.canCollect()) {
         this.roomba.collectDust(dust);
         this.dustSpawner.removeDust(dust);
+        // Queue a replacement dust bunny to spawn
+        this.dustSpawner.queueRespawn();
       }
     }
 

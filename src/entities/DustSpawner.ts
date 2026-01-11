@@ -2,17 +2,21 @@ import { Scene, Vector3 } from '@babylonjs/core';
 import { NavigationGrid } from '../world/NavigationGrid';
 import { DustBunny, DustBunnyData } from './DustBunny';
 import { CollectedDust } from '../game/GameState';
+import { DUST_SPAWN_CONFIG, calculateDustRewards } from '../config/GameConfig';
 
 export class DustSpawner {
   private scene: Scene;
   private navigationGrid: NavigationGrid;
   private dockPosition: Vector3;
   private dustBunnies: Map<string, DustBunny> = new Map();
-  private maxDust: number = 15;
-  private minDust: number = 8;
+  private maxDust: number = DUST_SPAWN_CONFIG.maxDust;
+  private minDust: number = DUST_SPAWN_CONFIG.minDust;
   private spawnCooldown: number = 0;
-  private spawnInterval: number = 2; // seconds between spawns
+  private spawnInterval: number = DUST_SPAWN_CONFIG.spawnInterval;
   private idCounter: number = 0;
+
+  // Queue for respawning dust when collected
+  private respawnQueue: number = 0;
 
   constructor(scene: Scene, navigationGrid: NavigationGrid, dockPosition: Vector3) {
     this.scene = scene;
@@ -37,17 +41,17 @@ export class DustSpawner {
       return null;
     }
 
-    // Ensure minimum distance from dock
+    // Ensure minimum distance from dock (scale-aware)
     const distanceFromDock = Vector3.Distance(position, this.dockPosition);
-    if (distanceFromDock < 3) {
+    if (distanceFromDock < DUST_SPAWN_CONFIG.minDistanceFromDock) {
       return null; // Too close to dock, try again next frame
     }
 
     // Calculate path distance using A*
     const pathDistance = this.navigationGrid.getPathDistance(position, this.dockPosition);
 
-    // Calculate rewards based on path distance
-    const { pointValue, timeValue } = this.calculateRewards(pathDistance);
+    // Calculate rewards based on path distance (scale-aware via GameConfig)
+    const { pointValue, timeValue } = calculateDustRewards(pathDistance);
 
     // Create dust bunny data
     const id = `dust_${this.idCounter++}`;
@@ -67,30 +71,23 @@ export class DustSpawner {
     return dustBunny;
   }
 
-  private calculateRewards(pathDistance: number): { pointValue: number; timeValue: number } {
-    // Rewards based on A* path distance from dock
-    if (pathDistance >= 40) {
-      return { pointValue: 1000, timeValue: 12 };
-    } else if (pathDistance >= 25) {
-      return { pointValue: 500, timeValue: 8 };
-    } else if (pathDistance >= 10) {
-      return { pointValue: 250, timeValue: 5 };
-    } else {
-      return { pointValue: 100, timeValue: 2 };
-    }
-  }
-
   update(isEndlessMode: boolean): void {
-    // Only respawn in endless mode
-    if (!isEndlessMode) {
-      return;
-    }
-
     this.spawnCooldown -= 1 / 60; // Approximate delta time
 
-    if (this.spawnCooldown <= 0 && this.dustBunnies.size < this.minDust) {
-      this.spawnDust();
-      this.spawnCooldown = this.spawnInterval;
+    if (isEndlessMode) {
+      // Endless mode: respawn when count drops below minimum
+      if (this.spawnCooldown <= 0 && this.dustBunnies.size < this.minDust) {
+        this.spawnDust();
+        this.spawnCooldown = this.spawnInterval;
+      }
+    } else {
+      // Time Attack mode: process respawn queue
+      if (this.spawnCooldown <= 0 && this.respawnQueue > 0) {
+        if (this.spawnDust()) {
+          this.respawnQueue--;
+        }
+        this.spawnCooldown = this.spawnInterval;
+      }
     }
   }
 
@@ -128,12 +125,20 @@ export class DustSpawner {
     }
   }
 
+  /**
+   * Queue a dust bunny for respawning (used when dust is collected in Time Attack)
+   */
+  queueRespawn(count: number = 1): void {
+    this.respawnQueue += count;
+  }
+
   reset(): void {
     for (const dustBunny of this.dustBunnies.values()) {
       dustBunny.dispose();
     }
     this.dustBunnies.clear();
     this.spawnCooldown = 0;
+    this.respawnQueue = 0;
     this.idCounter = 0;
   }
 
