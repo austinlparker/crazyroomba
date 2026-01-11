@@ -10,26 +10,34 @@ export class ThirdPersonCamera {
   private camera: FreeCamera;
   private roomba: Roomba;
 
-  // Fixed overhead camera settings
-  private cameraHeight: number = 3.5;     // Height above roomba
-  private cameraOffsetZ: number = -1.5;   // Offset behind (negative Z = camera sees more ahead)
-  private lookAheadDistance: number = 2;  // How far ahead of roomba to look
+  // Third-person chase camera settings
+  private cameraHeight: number = 1.2;      // Height above roomba
+  private cameraDistance: number = 2.5;    // Distance behind roomba
+  private lookAheadHeight: number = 0.3;   // How high to look (slightly above roomba)
 
   constructor(scene: Scene, _canvas: HTMLCanvasElement, roomba: Roomba) {
     this.roomba = roomba;
 
     const roombaPos = roomba.getPosition();
+    const roombaRotation = roomba.getRotation();
 
-    // Create a free camera positioned above and slightly behind the roomba
+    // Calculate initial camera position behind the roomba
+    const offsetX = -Math.sin(roombaRotation) * this.cameraDistance;
+    const offsetZ = -Math.cos(roombaRotation) * this.cameraDistance;
+
+    // Create a free camera positioned behind the roomba
     this.camera = new FreeCamera(
-      'overheadCamera',
-      new Vector3(roombaPos.x, roombaPos.y + this.cameraHeight, roombaPos.z + this.cameraOffsetZ),
+      'chaseCamera',
+      new Vector3(
+        roombaPos.x + offsetX,
+        roombaPos.y + this.cameraHeight,
+        roombaPos.z + offsetZ
+      ),
       scene
     );
 
-    // Point camera forward (positive Z direction) and down at the roomba
-    // This creates a fixed orientation - "up" on screen is always +Z in world
-    this.camera.setTarget(new Vector3(roombaPos.x, roombaPos.y, roombaPos.z + this.lookAheadDistance));
+    // Point camera at the roomba
+    this.camera.setTarget(new Vector3(roombaPos.x, roombaPos.y + this.lookAheadHeight, roombaPos.z));
 
     // Disable all inputs - camera position is controlled programmatically
     this.camera.inputs.clear();
@@ -40,15 +48,24 @@ export class ThirdPersonCamera {
 
   update(_deltaTime: number = 0.016): void {
     const roombaPos = this.roomba.getPosition();
+    const roombaRotation = this.roomba.getRotation();
 
-    // Move camera to stay above roomba (fixed offset, no rotation)
-    this.camera.position.x = roombaPos.x;
+    // Calculate camera position behind the roomba based on its rotation
+    // Negative sin/cos to position camera BEHIND the roomba (opposite of forward direction)
+    const offsetX = -Math.sin(roombaRotation) * this.cameraDistance;
+    const offsetZ = -Math.cos(roombaRotation) * this.cameraDistance;
+
+    // Position camera behind and above the roomba
+    this.camera.position.x = roombaPos.x + offsetX;
     this.camera.position.y = roombaPos.y + this.cameraHeight;
-    this.camera.position.z = roombaPos.z + this.cameraOffsetZ;
+    this.camera.position.z = roombaPos.z + offsetZ;
 
-    // Always look ahead in the +Z direction from the roomba's position
-    // This keeps the camera orientation fixed - world +Z is always "up" on screen
-    this.camera.setTarget(new Vector3(roombaPos.x, roombaPos.y, roombaPos.z + this.lookAheadDistance));
+    // Look at the roomba (slightly above center for better view of what's ahead)
+    this.camera.setTarget(new Vector3(
+      roombaPos.x,
+      roombaPos.y + this.lookAheadHeight,
+      roombaPos.z
+    ));
   }
 
   getCamera(): Camera {
@@ -56,17 +73,17 @@ export class ThirdPersonCamera {
   }
 
   setRadius(radius: number): void {
-    // Adjust height based on "radius" for compatibility
-    this.cameraHeight = radius * 1.4;
+    // Adjust distance based on "radius" for compatibility
+    this.cameraDistance = radius;
   }
 
-  // Reset camera - no rotation to reset since camera is fixed
+  // Reset camera - snap to current roomba position
   resetToFollow(): void {
-    // No-op for fixed camera
+    this.update(0);
   }
 
-  // Get camera's horizontal angle - fixed at 0 (facing +Z)
+  // Get camera's horizontal angle (matches roomba rotation)
   getHorizontalAngle(): number {
-    return 0;
+    return this.roomba.getRotation();
   }
 }
