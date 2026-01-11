@@ -7,6 +7,7 @@ import {
   Mesh,
   PhysicsAggregate,
   PhysicsShapeType,
+  Quaternion,
 } from '@babylonjs/core';
 import { CollectedDust } from '../game/GameState';
 
@@ -414,8 +415,24 @@ export class Roomba {
       );
     }
 
-    // Update visual rotation (physics handles position)
-    this.body.rotation.y = this.rotation;
+    // Update physics body rotation (physics engine controls the mesh transform)
+    // We need to update the physics body's rotation, not just the mesh
+    // Create a quaternion from Y-axis rotation
+    const yRotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), this.rotation);
+
+    // Apply the Y rotation while preserving any X/Z wobble from stun effect
+    if (!this.isStunned) {
+      // Normal case: just set Y rotation
+      this.physicsAggregate.body.transformNode.rotationQuaternion = yRotation;
+    } else {
+      // During stun: preserve the wobble but update Y rotation
+      // The body.rotation.x and body.rotation.z are set by the wobble effect
+      // We need to combine them with the Y rotation
+      const wobbleX = this.body.rotation.x;
+      const wobbleZ = this.body.rotation.z;
+      const combinedRotation = Quaternion.RotationYawPitchRoll(this.rotation, wobbleX, wobbleZ);
+      this.physicsAggregate.body.transformNode.rotationQuaternion = combinedRotation;
+    }
 
     // Update bin bar
     this.updateBinBar();
