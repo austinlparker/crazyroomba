@@ -78,14 +78,14 @@ export function calculateDustRewards(pathDistance: number): { pointValue: number
   }
 }
 
-// House/world dimensions
+// House/world dimensions (expanded layout with hallway and more rooms)
 export const WORLD_CONFIG = {
-  roomSize: 7 * WORLD_SCALE,
+  roomSize: 5 * WORLD_SCALE, // Varied room sizes now
   wallHeight: 3 * WORLD_SCALE,
   wallThickness: 0.2 * WORLD_SCALE,
   bounds: {
-    min: { x: -7 * WORLD_SCALE, y: 0, z: -7 * WORLD_SCALE },
-    max: { x: 7 * WORLD_SCALE, y: 3 * WORLD_SCALE, z: 7 * WORLD_SCALE },
+    min: { x: -9 * WORLD_SCALE, y: 0, z: -7 * WORLD_SCALE },
+    max: { x: 10 * WORLD_SCALE, y: 3 * WORLD_SCALE, z: 8 * WORLD_SCALE },
   },
 };
 

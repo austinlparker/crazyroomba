@@ -7,8 +7,8 @@ export class NavigationGrid {
   private grid: Grid;
   private finder: AStarFinder;
   private cellSize: number = 0.5;
-  private offsetX: number = 15; // Offset to convert world coords to grid coords
-  private offsetZ: number = 15;
+  private offsetX: number = 10; // Offset to convert world coords to grid coords
+  private offsetZ: number = 10;
   private gridWidth: number;
   private gridHeight: number;
 

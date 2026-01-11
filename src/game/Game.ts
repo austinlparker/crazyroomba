@@ -121,11 +121,12 @@ export class Game {
     this.navigationGrid.generate();
 
     // Create charging dock in living room corner (against wall, realistic positioning)
-    this.chargingDock = new ChargingDock(this.scene, new Vector3(-6.5, 0, -6.6));
+    // Living room is at (-6, 0, -3.5) with size 5x5, so it spans X: -8.5 to -3.5, Z: -6 to -1
+    this.chargingDock = new ChargingDock(this.scene, new Vector3(-7.5, 0, -5.0));
     this.chargingDock.create();
 
     // Create roomba at dock position (in front of dock)
-    this.roomba = new Roomba(this.scene, new Vector3(-6.5, 0.05, -6.0));
+    this.roomba = new Roomba(this.scene, new Vector3(-7.5, 0.05, -4.5));
     await this.roomba.create();
 
     // Pass collidable meshes to roomba for collision detection
