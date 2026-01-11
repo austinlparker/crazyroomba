@@ -43,9 +43,9 @@ export class Roomba {
   private binContents: CollectedDust[] = [];
   private collectionRadius: number = 0.8;
 
-  // Roomba size - realistic scale (about 35cm diameter in a ~5m room)
-  private diameter: number = 0.5;
-  private height: number = 0.12;
+  // Roomba size - realistic scale (actual Roomba is 3.5 inches / 8.9cm tall, 35cm diameter)
+  private diameter: number = 0.35;
+  private height: number = 0.09;
 
   private startPosition: Vector3;
 

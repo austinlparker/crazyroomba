@@ -49,8 +49,8 @@ export class House {
   }
 
   private defineRooms(): RoomDefinition[] {
-    // Room size: ~7.5m x 7.5m (realistic room size)
-    const roomSize = 15;
+    // Room size: ~7m x 7m (realistic room size at roomba scale)
+    const roomSize = 7;
     const halfRoom = roomSize / 2;
 
     return [
@@ -61,64 +61,64 @@ export class House {
         size: new Vector3(roomSize, 0.1, roomSize),
         floorColor: new Color3(0.76, 0.7, 0.6), // Warm beige
         doorways: [
-          { position: new Vector3(0, 0, halfRoom), width: 1.5, direction: 'z' }, // To bedroom
-          { position: new Vector3(halfRoom, 0, 0), width: 1.5, direction: 'x' }, // To kitchen
+          { position: new Vector3(0, 0, halfRoom), width: 0.9, direction: 'z' }, // To bedroom
+          { position: new Vector3(halfRoom, 0, 0), width: 0.9, direction: 'x' }, // To kitchen
         ],
         obstacles: [
           // Couch (3-seater with legs)
           {
             type: 'couch',
             name: 'couch',
-            position: new Vector3(-4, 0, -3),
-            size: new Vector3(3, 0.5, 1.2),
+            position: new Vector3(-1.9, 0, -1.4),
+            size: new Vector3(1.4, 0.23, 0.56),
             color: new Color3(0.4, 0.3, 0.5),
             legColor: new Color3(0.25, 0.2, 0.15),
-            legHeight: 0.15,
+            legHeight: 0.07,
           },
           // Coffee table with legs
           {
             type: 'table',
             name: 'coffeeTable',
-            position: new Vector3(-4, 0, -1),
-            size: new Vector3(1.5, 0.08, 0.8),
+            position: new Vector3(-1.9, 0, -0.47),
+            size: new Vector3(0.7, 0.04, 0.37),
             color: new Color3(0.45, 0.35, 0.25),
             legColor: new Color3(0.35, 0.25, 0.15),
-            legHeight: 0.35,
+            legHeight: 0.16,
           },
           // TV stand (low, no legs needed)
           {
             type: 'box',
             name: 'tvStand',
-            position: new Vector3(-4, 0.2, 2),
-            size: new Vector3(2, 0.4, 0.5),
+            position: new Vector3(-1.9, 0.09, 0.93),
+            size: new Vector3(0.93, 0.19, 0.23),
             color: new Color3(0.2, 0.2, 0.2),
           },
           // Armchair with legs
           {
             type: 'chair',
             name: 'armchair',
-            position: new Vector3(-1, 0, -3),
-            size: new Vector3(0.9, 0.45, 0.9),
+            position: new Vector3(-0.47, 0, -1.4),
+            size: new Vector3(0.42, 0.21, 0.42),
             color: new Color3(0.45, 0.35, 0.5),
             legColor: new Color3(0.25, 0.2, 0.15),
-            legHeight: 0.12,
+            legHeight: 0.06,
           },
           // Side table
           {
             type: 'table',
             name: 'sideTable',
-            position: new Vector3(0.5, 0, -3),
-            size: new Vector3(0.5, 0.05, 0.5),
+            position: new Vector3(0.23, 0, -1.4),
+            size: new Vector3(0.23, 0.02, 0.23),
             color: new Color3(0.5, 0.4, 0.3),
             legColor: new Color3(0.3, 0.2, 0.15),
-            legHeight: 0.5,
+            legHeight: 0.23,
           },
           // Plant pot (solid, no legs)
           {
             type: 'cylinder',
             name: 'plant',
-            position: new Vector3(5, 0.4, 3),
-            size: new Vector3(0.4, 0.8, 0.4),
+            position: new Vector3(2.3, 0.19, 1.4),
+            size: new Vector3(0.19, 0.37, 0.19),
             color: new Color3(0.6, 0.4, 0.3),
           },
         ],
@@ -130,72 +130,72 @@ export class House {
         size: new Vector3(roomSize, 0.1, roomSize),
         floorColor: new Color3(0.9, 0.9, 0.85), // White tile
         doorways: [
-          { position: new Vector3(-halfRoom, 0, 0), width: 1.5, direction: 'x' }, // To living room
-          { position: new Vector3(0, 0, halfRoom), width: 1.5, direction: 'z' }, // To bathroom
+          { position: new Vector3(-halfRoom, 0, 0), width: 0.9, direction: 'x' }, // To living room
+          { position: new Vector3(0, 0, halfRoom), width: 0.9, direction: 'z' }, // To bathroom
         ],
         obstacles: [
           // Kitchen counter along wall (solid, floor-level)
           {
             type: 'box',
             name: 'counter1',
-            position: new Vector3(5, 0.45, -5),
-            size: new Vector3(4, 0.9, 0.6),
+            position: new Vector3(2.3, 0.21, -2.3),
+            size: new Vector3(1.9, 0.42, 0.28),
             color: new Color3(0.7, 0.7, 0.7),
           },
           // Counter along side wall
           {
             type: 'box',
             name: 'counter2',
-            position: new Vector3(5.5, 0.45, -1),
-            size: new Vector3(0.6, 0.9, 6),
+            position: new Vector3(2.6, 0.21, -0.47),
+            size: new Vector3(0.28, 0.42, 2.8),
             color: new Color3(0.7, 0.7, 0.7),
           },
           // Kitchen island with legs
           {
             type: 'table',
             name: 'island',
-            position: new Vector3(0, 0, -2),
-            size: new Vector3(2, 0.1, 1.2),
+            position: new Vector3(0, 0, -0.93),
+            size: new Vector3(0.93, 0.05, 0.56),
             color: new Color3(0.65, 0.65, 0.65),
             legColor: new Color3(0.4, 0.4, 0.4),
-            legHeight: 0.8,
+            legHeight: 0.37,
           },
           // Kitchen table with legs
           {
             type: 'table',
             name: 'kitchenTable',
-            position: new Vector3(-3, 0, 3),
-            size: new Vector3(1.2, 0.05, 1.2),
+            position: new Vector3(-1.4, 0, 1.4),
+            size: new Vector3(0.56, 0.02, 0.56),
             color: new Color3(0.5, 0.4, 0.3),
             legColor: new Color3(0.35, 0.25, 0.2),
-            legHeight: 0.7,
+            legHeight: 0.33,
           },
           // Chair 1
           {
             type: 'chair',
             name: 'chair1',
-            position: new Vector3(-4.2, 0, 3),
-            size: new Vector3(0.45, 0.35, 0.45),
+            position: new Vector3(-1.96, 0, 1.4),
+            size: new Vector3(0.21, 0.16, 0.21),
             color: new Color3(0.4, 0.35, 0.3),
             legColor: new Color3(0.3, 0.25, 0.2),
-            legHeight: 0.4,
+            legHeight: 0.19,
           },
           // Chair 2
           {
             type: 'chair',
             name: 'chair2',
-            position: new Vector3(-1.8, 0, 3),
-            size: new Vector3(0.45, 0.35, 0.45),
+            position: new Vector3(-0.84, 0, 1.4),
+            size: new Vector3(0.21, 0.16, 0.21),
             color: new Color3(0.4, 0.35, 0.3),
             legColor: new Color3(0.3, 0.25, 0.2),
-            legHeight: 0.4,
+            legHeight: 0.19,
           },
           // Trash can (solid)
           {
             type: 'cylinder',
             name: 'trash',
-            position: new Vector3(3, 0.35, 5),
-            size: new Vector3(0.25, 0.7, 0.25),
+            position: new Vector3(1.4, 0.16, 2.3),
+            size: new Vector3(0.12, 0.33, 0.12),
             color: new Color3(0.3, 0.3, 0.35),
           },
         ],
@@ -207,65 +207,65 @@ export class House {
         size: new Vector3(roomSize, 0.1, roomSize),
         floorColor: new Color3(0.6, 0.65, 0.75), // Soft blue carpet
         doorways: [
-          { position: new Vector3(0, 0, -halfRoom), width: 1.5, direction: 'z' }, // To living room
-          { position: new Vector3(halfRoom, 0, 0), width: 1.5, direction: 'x' }, // To bathroom
+          { position: new Vector3(0, 0, -halfRoom), width: 0.9, direction: 'z' }, // To living room
+          { position: new Vector3(halfRoom, 0, 0), width: 0.9, direction: 'x' }, // To bathroom
         ],
         obstacles: [
           // Bed with legs
           {
             type: 'bed',
             name: 'bed',
-            position: new Vector3(-4, 0, 3),
-            size: new Vector3(2, 0.3, 2.5),
+            position: new Vector3(-1.9, 0, 1.4),
+            size: new Vector3(0.93, 0.14, 1.17),
             color: new Color3(0.85, 0.85, 0.9),
             legColor: new Color3(0.4, 0.3, 0.25),
-            legHeight: 0.2,
+            legHeight: 0.09,
           },
           // Nightstand with legs
           {
             type: 'table',
             name: 'nightstand',
-            position: new Vector3(-2, 0, 4.5),
-            size: new Vector3(0.5, 0.05, 0.5),
+            position: new Vector3(-0.93, 0, 2.1),
+            size: new Vector3(0.23, 0.02, 0.23),
             color: new Color3(0.4, 0.35, 0.3),
             legColor: new Color3(0.3, 0.25, 0.2),
-            legHeight: 0.45,
+            legHeight: 0.21,
           },
           // Dresser (solid, floor-level)
           {
             type: 'box',
             name: 'dresser',
-            position: new Vector3(3, 0.5, -4),
-            size: new Vector3(1.8, 1, 0.6),
+            position: new Vector3(1.4, 0.23, -1.9),
+            size: new Vector3(0.84, 0.47, 0.28),
             color: new Color3(0.45, 0.4, 0.35),
           },
           // Wardrobe (solid, floor-level)
           {
             type: 'box',
             name: 'wardrobe',
-            position: new Vector3(-5.5, 1, -2),
-            size: new Vector3(1.2, 2, 0.6),
+            position: new Vector3(-2.6, 0.47, -0.93),
+            size: new Vector3(0.56, 0.93, 0.28),
             color: new Color3(0.5, 0.45, 0.4),
           },
           // Desk with legs
           {
             type: 'table',
             name: 'desk',
-            position: new Vector3(4, 0, 2),
-            size: new Vector3(1.5, 0.05, 0.7),
+            position: new Vector3(1.9, 0, 0.93),
+            size: new Vector3(0.7, 0.02, 0.33),
             color: new Color3(0.55, 0.45, 0.35),
             legColor: new Color3(0.35, 0.25, 0.2),
-            legHeight: 0.7,
+            legHeight: 0.33,
           },
           // Desk chair
           {
             type: 'chair',
             name: 'deskChair',
-            position: new Vector3(4, 0, 1),
-            size: new Vector3(0.5, 0.3, 0.5),
+            position: new Vector3(1.9, 0, 0.47),
+            size: new Vector3(0.23, 0.14, 0.23),
             color: new Color3(0.2, 0.2, 0.25),
             legColor: new Color3(0.15, 0.15, 0.15),
-            legHeight: 0.35,
+            legHeight: 0.16,
           },
         ],
       },
@@ -276,51 +276,51 @@ export class House {
         size: new Vector3(roomSize, 0.1, roomSize),
         floorColor: new Color3(0.95, 0.95, 0.95), // White tile
         doorways: [
-          { position: new Vector3(-halfRoom, 0, 0), width: 1.5, direction: 'x' }, // To bedroom
-          { position: new Vector3(0, 0, -halfRoom), width: 1.5, direction: 'z' }, // To kitchen
+          { position: new Vector3(-halfRoom, 0, 0), width: 0.9, direction: 'x' }, // To bedroom
+          { position: new Vector3(0, 0, -halfRoom), width: 0.9, direction: 'z' }, // To kitchen
         ],
         obstacles: [
           // Bathtub (solid)
           {
             type: 'box',
             name: 'bathtub',
-            position: new Vector3(-4, 0.35, 4),
-            size: new Vector3(1.8, 0.7, 2.5),
+            position: new Vector3(-1.9, 0.16, 1.9),
+            size: new Vector3(0.84, 0.33, 1.17),
             color: new Color3(0.95, 0.95, 1),
           },
           // Toilet (solid)
           {
             type: 'box',
             name: 'toilet',
-            position: new Vector3(4, 0.3, 4),
-            size: new Vector3(0.5, 0.6, 0.7),
+            position: new Vector3(1.9, 0.14, 1.9),
+            size: new Vector3(0.23, 0.28, 0.33),
             color: new Color3(1, 1, 1),
           },
           // Sink cabinet (solid)
           {
             type: 'box',
             name: 'sink',
-            position: new Vector3(5, 0.4, -2),
-            size: new Vector3(1.2, 0.8, 0.5),
+            position: new Vector3(2.3, 0.19, -0.93),
+            size: new Vector3(0.56, 0.37, 0.23),
             color: new Color3(0.9, 0.9, 0.9),
           },
           // Laundry basket (solid)
           {
             type: 'cylinder',
             name: 'laundry',
-            position: new Vector3(0, 0.35, 5),
-            size: new Vector3(0.35, 0.7, 0.35),
+            position: new Vector3(0, 0.16, 2.3),
+            size: new Vector3(0.16, 0.33, 0.16),
             color: new Color3(0.6, 0.55, 0.5),
           },
           // Bathroom stool with legs
           {
             type: 'chair',
             name: 'stool',
-            position: new Vector3(-2, 0, 1),
-            size: new Vector3(0.35, 0.08, 0.35),
+            position: new Vector3(-0.93, 0, 0.47),
+            size: new Vector3(0.16, 0.04, 0.16),
             color: new Color3(0.8, 0.8, 0.8),
             legColor: new Color3(0.6, 0.6, 0.6),
-            legHeight: 0.35,
+            legHeight: 0.16,
           },
         ],
       },
@@ -927,8 +927,8 @@ export class House {
 
   getBounds(): { min: Vector3; max: Vector3 } {
     return {
-      min: new Vector3(-15, 0, -15),
-      max: new Vector3(15, 3, 15),
+      min: new Vector3(-7, 0, -7),
+      max: new Vector3(7, 3, 7),
     };
   }
 }
