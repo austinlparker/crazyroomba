@@ -34,6 +34,8 @@ PYTHON=.venv/bin/python npm run test:browser
 
 Build once with `npm run build` before running the browser suite. The runner starts and stops Vite automatically. It checks portrait/narrow/landscape touch controls, UTC rollover, missing or throwing Web Audio, blocked-autoplay recovery and actual voice/effect decoding. It also loads the production build, plays all four stages and checks the six-skin garage without using development hooks. `npm run test:browser -- --production-only` runs just that production check. API responses and clocks are local fixtures. Screenshots go to `/tmp/roomba-*-qa`. CI installs Chromium's system dependencies and runs this same suite.
 
+The countdown regression schedules frames once per second using real elapsed time, then stops frames while paused to verify correct resumption. To reproduce a CPU-only runner locally, use `npm run test:browser -- --production-only --software-rendering`. This forces Chromium SwiftShader while retaining the game's default High graphics and the normal test timeouts.
+
 For focused WebKit or additional viewport checks, start Vite and invoke the individual scripts with `--help`. `tests/social.browser.py` additionally exercises live public graph services against local server fixtures; it is a separate opt-in check because it depends on external providers. The real provider consent flow requires a signed-in browser and is not simulated by CI.
 
 ## Code boundaries

@@ -63,6 +63,7 @@ export class App {
   private hudView: Hud | null = null;
   private accum = 0;
   private last = 0;
+  private lastUiUpdate = 0;
   private hudClock = 0;
   private toastTimer = 0;
   private startEpoch = 0;
@@ -650,6 +651,7 @@ export class App {
       this.submitted = false;
       this.accum = 0;
       this.countdown = 4.5;
+      this.lastUiUpdate = performance.now();
       this.state = "countdown";
       this.hudView.reset();
       this.input.enabled = false;
@@ -737,6 +739,7 @@ export class App {
     this.music.start();
     this.input.enabled = this.state === "playing";
     this.accum = 0;
+    this.lastUiUpdate = performance.now();
     document
       .getElementById("countdown")!
       .classList.toggle("hidden", this.state !== "countdown");
@@ -876,21 +879,29 @@ export class App {
     this.last = ms;
     if (document.hidden) {
       this.accum = 0;
+      this.lastUiUpdate = performance.now();
       requestAnimationFrame((t) => this.frame(t));
       return;
     }
     this.input.pollGamepad();
+    // UI durations follow elapsed time even when rendering is slow. Physics
+    // keeps its bounded catch-up budget; paused time must not advance either.
+    const now = performance.now();
+    let uiDt = Math.max(0, (now - this.lastUiUpdate) / 1000);
+    this.lastUiUpdate = now;
     if (this.state === "countdown") {
-      this.countdown -= dt;
+      this.countdown -= uiDt;
       this.hudView!.countdown(this.countdown);
       if (this.countdown <= 0) {
         this.state = "playing";
         this.input.enabled = true;
         this.accum = 0;
+        // The GO banner starts now, not at the beginning of this slow frame.
+        uiDt = 0;
       }
     }
     if (this.state === "playing") {
-      this.hudView?.advance(dt, this.sim);
+      this.hudView?.advance(uiDt, this.sim);
       this.accum += dt;
       let steps = 0;
       while (this.accum >= STEP && steps++ < 12) {

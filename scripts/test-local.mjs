@@ -127,6 +127,7 @@ try {
           "844",
         ],
         ["daily-rotation.browser.py"],
+        ["countdown.browser.py"],
         ["audio-unavailable.browser.py"],
         ["menu-music.browser.py", "--autoplay", "blocked"],
         ["game-audio.browser.py"],
@@ -145,7 +146,14 @@ try {
       "--strictPort",
     ]);
     await ready(previewOrigin, preview);
-    await run(python, ["tests/stages.browser.py", "--url", previewOrigin]);
+    await run(python, [
+      "tests/stages.browser.py",
+      "--url",
+      previewOrigin,
+      ...(process.argv.includes("--software-rendering")
+        ? ["--software-rendering"]
+        : []),
+    ]);
   }
 } finally {
   stop();
