@@ -1,0 +1,71 @@
+{
+  "voiceId": "IKne3meq5aSn9XLyUdCD",
+  "voice": "Charlie",
+  "model": "eleven_v3",
+  "settings": {
+    "stability": 0.0,
+    "similarity_boost": 0.7,
+    "style": 0.85,
+    "use_speaker_boost": true
+  },
+  "seed": 990930,
+  "lines": [
+    {
+      "id": "setup",
+      "at": 0.1,
+      "until": 2.35,
+      "text": "They said, clean the house.",
+      "direction": "[dry] [deadpan] They said, clean the house."
+    },
+    {
+      "id": "radical",
+      "at": 2.48,
+      "until": 5.05,
+      "text": "You heard, let's get radical!",
+      "direction": "[raspy] [wildly excited] You heard, [shouting] LET'S GET RADICAL!"
+    },
+    {
+      "id": "chaos",
+      "at": 5.18,
+      "until": 8.75,
+      "text": "Turn dust into points and chores into chaos!",
+      "direction": "[raspy] [excited] Turn dust into points and chores into [shouting] CHAOS!"
+    },
+    {
+      "id": "streets",
+      "at": 9.3,
+      "until": 12.08,
+      "text": "From the stairs to the streets...",
+      "direction": "[raspy] [building excitement] From the stairs to the streets..."
+    },
+    {
+      "id": "moon",
+      "at": 13.95,
+      "until": 16.42,
+      "text": "All the way to the freakin' moon!",
+      "direction": "[raspy] [excited] ALL the way to the [shouting] FREAKIN' MOON!"
+    },
+    {
+      "id": "attitude",
+      "at": 16.72,
+      "until": 20.28,
+      "text": "One tiny vacuum. Maximum attitude!",
+      "direction": "[raspy] [playful] One tiny vacuum. [shouting] MAXIMUM ATTITUDE!"
+    },
+    {
+      "id": "challenge",
+      "at": 20.55,
+      "until": 25.72,
+      "text": "Now grab your friends and show the Daily who's boss!",
+      "direction": "[raspy] [challenging] Now grab your friends and show the Daily [shouting] WHO'S BOSS!"
+    },
+    {
+      "id": "brand",
+      "at": 25.93,
+      "until": 29.92,
+      "text": "Crazy Roomba! All guts. No dust. Play free!",
+      "direction": "[raspy] [announcing] CRAZY ROOMBA! [shouting] ALL GUTS! NO DUST! [confident] Play free!"
+    }
+  ],
+  "cache": "voice-extreme"
+}

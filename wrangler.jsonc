@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "crazy-roomba-v2",
+  "account_id": "855b76943db29698ef0d3a42430f2f0b",
+  "workers_dev": true,
+  "routes": [{ "pattern": "roomba.aparker.io", "custom_domain": true }],
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-05",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*",
+      "/client-metadata.json",
+      "/.well-known/did.json",
+    ],
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "crazy-roomba-v2",
+      "database_id": "940229fa-5e97-4546-b816-e17471148af3",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+}

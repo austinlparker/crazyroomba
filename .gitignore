@@ -3,6 +3,8 @@ node_modules/
 
 # Build output
 dist/
+coverage/
+*.tsbuildinfo
 
 # IDE
 .idea/
@@ -20,9 +22,29 @@ npm-debug.log*
 
 # Environment
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 
 # Temporary files
 *.tmp
 *.temp
+*.ses
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Cloudflare local state and browser test artifacts
+.wrangler/
+.dev.vars
+.dev.vars.*
+playwright-report/
+test-results/
+
+# Generated promotional exports (reproducible via scripts/promo)
+exports/
+
+# Generation sources, local tools, and Python caches
+.cache/
+.venv/
+__pycache__/
+*.py[cod]

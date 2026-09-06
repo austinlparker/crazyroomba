@@ -1,0 +1,94 @@
+.daily-standing {
+  border: 2px solid var(--ink);
+  border-left: 7px solid var(--orange);
+  margin: 20px 0;
+  padding: 16px;
+  background: #fff7de;
+}
+.standing-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  animation: standing-arrive 250ms ease-out both;
+}
+.standing-hero > strong {
+  font: italic clamp(48px, 11vw, 76px)/1 var(--display);
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--yellow);
+  flex-shrink: 0;
+}
+.standing-hero h3 {
+  font: italic 22px/1.15 var(--display);
+  margin: 0 0 6px;
+}
+.standing-hero p,
+.standing-solo,
+.standing-status {
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 8px 0;
+}
+.standing-status:empty {
+  display: none;
+}
+.standing-neighbors {
+  margin-top: 14px;
+}
+.standing-neighbors .board-row {
+  padding-block: 9px;
+}
+.standing-neighbors .account-label small {
+  display: none;
+}
+.standing-actions:not(:empty) {
+  margin-top: 14px;
+}
+.standing-actions button {
+  min-height: 46px;
+  font-size: 17px;
+}
+.dialog:has(.daily-standing) .result-score {
+  font-size: 64px;
+}
+.dialog:has(.daily-standing) .stat-grid {
+  margin-block: 14px;
+  padding-block: 14px;
+}
+@keyframes standing-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 480px) {
+  .daily-standing {
+    padding: 12px 9px;
+  }
+  .standing-hero {
+    gap: 12px;
+  }
+  .standing-hero > div {
+    min-width: 0;
+  }
+  .standing-hero h3 {
+    font-size: 18px;
+  }
+  .standing-neighbors .board-row {
+    grid-template-columns: 26px minmax(0, 1fr) auto;
+  }
+  .standing-neighbors .account-avatar {
+    display: none;
+  }
+  .standing-neighbors .board-row strong {
+    font-size: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .standing-hero {
+    animation: none;
+  }
+}

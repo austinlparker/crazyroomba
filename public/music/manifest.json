@@ -1,0 +1,64 @@
+{
+  "version": "dust-fm-radio-2",
+  "provider": "ElevenLabs",
+  "model": "music_v2",
+  "instrumental": true,
+  "tracks": {
+    "curbside-riot": {
+      "id": "curbside-riot",
+      "title": "Curbside Riot",
+      "style": "Skate punk",
+      "seconds": 90,
+      "prompt": "An original ninety-second instrumental skate-punk song for an exuberant 1990s skateboarding arcade soundtrack. 178 BPM, bright overdriven power chords, fast downstroked palm-muted guitar verses, big melodic octave-guitar hooks, driving picked bass, energetic live punk drums and sharp snare fills. Sunny rebellious garage-band attitude, raw and lively with a clear punchy mix. Open with one snare pickup straight into the riff. Alternate a tight main riff with a soaring instrumental chorus, a brief half-time bridge, then a final energetic hook and tight musical ending. Maintain momentum and room for game effects. Absolutely instrumental: no singing, rapping, vocals, chants, speech, human shouts or sampled words. No imitation of any existing song or artist.",
+      "file": "curbside-riot.mp3",
+      "duration": 90.0,
+      "size": 1441166,
+      "sha256": "817d1c97b51d4aa59cddd99cb4aa8cbf5f99fd5f551f9e6c52129dd5027a716b",
+      "sourceSha256": "c9432d521d58d41b0e4e6a4710fe134c562cd65e465298052cacd12ff8200566",
+      "integratedLufs": -18.36,
+      "truePeakDbtp": -7.3
+    },
+    "kickflip-static": {
+      "id": "kickflip-static",
+      "title": "Kickflip Static",
+      "style": "Boom-bap hip-hop",
+      "seconds": 90,
+      "prompt": "An original ninety-second instrumental upbeat 1990s boom-bap hip-hop track for a skateboarding arcade soundtrack. 108 BPM, hard snappy swung breakbeat drums, deep funky electric bass, syncopated wah guitar, chopped original brass and electric-piano motifs, tasteful short turntable scratches made from instrumental sounds only. Confident bouncy street-party groove, playful swagger, warm dusty texture with punchy clean bass. Immediate beat and memorable riff, alternate two groove sections with a four-bar bass-and-drums turnaround, return to the hook and finish decisively. Consistent forward motion, no ambient intro or lengthy breakdown. Strictly instrumental: no rap, vocals, speech, sampled words, chants or human shouts. Entirely original composition, do not imitate an existing song or artist.",
+      "file": "kickflip-static.mp3",
+      "duration": 90.0,
+      "size": 1441166,
+      "sha256": "3eeb4944d1010decf6a17b061198c113e27ef382ef862398f43c06e37f466da2",
+      "sourceSha256": "4c6f27abcefc7b6957d9b87d2350a98f96fb2bc4bdeec3cfe61c8438c7fc1567",
+      "integratedLufs": -18.4,
+      "truePeakDbtp": -4.26
+    },
+    "garage-afterburner": {
+      "id": "garage-afterburner",
+      "title": "Garage Afterburner",
+      "style": "Alternative rock",
+      "seconds": 90,
+      "prompt": "An original ninety-second instrumental late-1990s alternative rock song for a high-energy skateboarding arcade soundtrack. 148 BPM, a memorable chunky syncopated fuzz-guitar riff, bouncing bass locked to a powerful live drum groove, open hi-hat accents, short melodic lead-guitar answers and ringing power chords in the chorus. Gritty garage texture, cocky upbeat drive, heavy but fun rather than dark or angry. Begin directly with full-band riff, develop a contrasting open-chord instrumental chorus, a brief tom-driven bridge and a final hook with a clean resolved ending. Space for announcer calls; no long intro, solos or silent breakdowns. Entirely instrumental: no vocals, lyrics, shouts, chants, speech or vocal samples. Original composition without imitating an existing artist or song.",
+      "file": "garage-afterburner.mp3",
+      "duration": 90.0,
+      "size": 1441166,
+      "sha256": "3f9ed3385cf193cb657b380c92eb1aef3575de1fb14d6b2204220c07293598c5",
+      "sourceSha256": "524d9f30b2781ac71a5dc7242444e2e286080b6568d643caf87c349e8302ff56",
+      "integratedLufs": -18.36,
+      "truePeakDbtp": -7.0
+    },
+    "brass-and-burnouts": {
+      "id": "brass-and-burnouts",
+      "title": "Brass & Burnouts",
+      "style": "Ska punk",
+      "seconds": 90,
+      "prompt": "An original ninety-second instrumental ska-punk song for a sunny late-1990s skateboarding arcade soundtrack. 166 BPM, bouncy walking electric bass, clipped offbeat clean guitar upstrokes, punchy trumpet and trombone hook, fast lively drums, exploding into crunchy punk power-chord choruses. Playful rowdy summer energy, a small live band with tight dynamics and crisp brass, uplifting and mischievous. Start straight into the brass riff, alternate skanking groove and punk chorus, a brief bass-led turnaround, then a last big hook and compact final hit. Keep the arrangement clear for game sound effects. Strictly instrumental: no singing, chanting, speech, human shouts, rap or vocal samples. Entirely original, no imitation of an existing artist or song.",
+      "file": "brass-and-burnouts.mp3",
+      "duration": 90.0,
+      "size": 1441166,
+      "sha256": "812ac6a5aa632b39ada0f9ebe5a0feda8818ae8af5346e2944f6846a6632be91",
+      "sourceSha256": "aa4dd2ad9661f047adea07d98e9419ed10717ce0e4e1f5701ebb3d3d2d5df1e4",
+      "integratedLufs": -18.39,
+      "truePeakDbtp": -6.51
+    }
+  }
+}

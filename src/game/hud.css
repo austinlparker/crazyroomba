@@ -1,0 +1,461 @@
+/* Driving instruments load with the game, after the garage. */
+.hud {
+  --hud-top: max(18px, env(safe-area-inset-top));
+  --hud-left: max(24px, env(safe-area-inset-left));
+  --hud-right: max(24px, env(safe-area-inset-right));
+  position: absolute;
+  inset: 0;
+  padding: var(--hud-top) var(--hud-right) 20px var(--hud-left);
+  pointer-events: none;
+  color: var(--paper);
+  background: linear-gradient(180deg, #10151575, transparent 160px);
+}
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.score-card {
+  min-width: 125px;
+  max-width: 190px;
+  text-shadow: 0 2px 3px #101515;
+}
+.score-card > span {
+  display: block;
+  color: var(--yellow);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+.score-card strong {
+  display: block;
+  font: 400 48px/1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+.score-card small {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.score-card small:empty {
+  display: none;
+}
+.score-goal-track {
+  height: 3px;
+  margin-top: 6px;
+  background: #fff5cf30;
+  overflow: hidden;
+}
+.score-goal-track i {
+  display: block;
+  height: 100%;
+  background: var(--yellow);
+}
+.timer-card {
+  position: absolute;
+  top: var(--hud-top);
+  left: 50%;
+  transform: translateX(-50%) skew(-5deg);
+  padding: 5px 18px 7px;
+  min-width: 124px;
+  background: var(--yellow);
+  border-bottom: 3px solid var(--orange);
+  border-radius: 3px;
+  color: var(--ink);
+  text-align: center;
+  box-shadow: 0 3px 12px #1114;
+}
+.timer-card > span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+.timer-card strong {
+  display: block;
+  font: 400 44px/1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+.timer-card.urgent {
+  background: var(--orange);
+  color: #fff;
+}
+.hud-actions {
+  display: flex;
+  gap: 8px;
+}
+.round-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #fff5cf55;
+  border-radius: 12px;
+  background: #182120d9;
+  color: var(--paper);
+  font-size: 22px;
+}
+.haul-meter {
+  position: absolute;
+  left: 50%;
+  bottom: 65px;
+  transform: translateX(-50%);
+  width: 310px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  gap: 0 12px;
+  padding: 12px 14px;
+  border: 1px solid #fff5cf38;
+  border-left: 4px solid var(--orange);
+  border-radius: 4px 18px 4px 4px;
+  background: #14201ff2;
+  box-shadow: 0 4px 16px #1114;
+  color: var(--paper);
+}
+.haul-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.haul-heading > span {
+  color: #ded9b8;
+}
+.haul-heading strong {
+  color: var(--paper);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.cargo-slots {
+  display: flex;
+  gap: 5px;
+  padding-right: 3px;
+}
+.cargo-slots i {
+  flex: 1;
+  height: 17px;
+  transform: skew(-15deg);
+  border: 1px solid #fff5cf42;
+  border-radius: 2px;
+  background: #fff5cf12;
+}
+.cargo-slots i.filled {
+  border-color: var(--yellow);
+  background: var(--yellow);
+  box-shadow: inset 0 3px #fff9;
+}
+.haul-bonus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid #fff5cf30;
+  padding-left: 10px;
+}
+.haul-bonus strong {
+  font: 400 29px/1 var(--display);
+  color: #f5eabf;
+}
+.haul-bonus > span {
+  margin-top: 3px;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  color: #c5c3ad;
+}
+.haul-meter.chained .haul-bonus strong,
+.haul-meter.full .haul-heading > span {
+  color: var(--yellow);
+}
+.haul-meter.full {
+  border-left-color: var(--yellow);
+}
+.haul-meter.full .cargo-slots i {
+  background: linear-gradient(180deg, #fff3a5, var(--yellow));
+}
+.combo-meter {
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 0 0 3px 0;
+  background: #fff5cf24;
+}
+.combo-meter i {
+  display: block;
+  height: 100%;
+  background: var(--yellow);
+  transform-origin: left;
+  transition: transform 0.1s linear;
+}
+.haul-meter.urgent .combo-meter i {
+  background: var(--orange);
+}
+.haul-meter.urgent .haul-bonus strong,
+.haul-meter.lost .haul-bonus > span {
+  color: #ffae79;
+}
+.haul-route {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  font-size: 12px;
+  line-height: 1;
+  color: #e6e3cd;
+}
+.dock-arrow {
+  display: inline-block;
+  flex: 0 0 auto;
+  font-size: 17px;
+  color: var(--yellow);
+}
+.boost-card {
+  position: absolute;
+  bottom: 65px;
+  right: var(--hud-right);
+  width: 128px;
+  color: var(--paper);
+  text-shadow: 0 2px 3px #101515;
+}
+.boost-card > div:first-child {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.boost-card svg {
+  width: 16px;
+  height: 16px;
+  color: var(--yellow);
+}
+.boost-card strong {
+  font: 400 38px/1 var(--display);
+}
+.boost-card span,
+.boost-card small {
+  font-size: 11px;
+}
+.boost-track {
+  height: 6px;
+  margin: 8px 0 4px;
+  overflow: hidden;
+  transform: skew(-12deg);
+  background: #fff5cf30;
+}
+.boost-track span {
+  display: block;
+  height: 100%;
+  background: var(--yellow);
+}
+body[data-boosting="true"] .boost-track span {
+  background: var(--orange);
+}
+.keyboard-help {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  text-shadow: 0 1px 4px #000;
+  white-space: nowrap;
+}
+.keyboard-help span,
+.keyboard-help button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+body[data-help="false"] .keyboard-help {
+  display: none;
+}
+.tutorial-card {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 16px;
+  border-left: 4px solid var(--orange);
+  border-radius: 4px;
+  background: #fff5cff2;
+  color: var(--ink);
+}
+.tutorial-card strong {
+  display: block;
+  margin-bottom: 4px;
+  font: 400 22px/1 var(--display);
+}
+.tutorial-card p {
+  margin: 0;
+  font-size: 14px;
+}
+@media (pointer: coarse), (max-width: 600px) {
+  .hud {
+    --hud-top: max(12px, env(safe-area-inset-top));
+    --hud-left: max(16px, env(safe-area-inset-left));
+    --hud-right: max(16px, env(safe-area-inset-right));
+    background: linear-gradient(180deg, #10151585, transparent 180px);
+  }
+  .score-card {
+    min-width: 0;
+    max-width: calc(50vw - 70px);
+  }
+  .score-card > span {
+    font-size: 10px;
+    letter-spacing: 0.03em;
+  }
+  .score-card strong {
+    font-size: clamp(20px, calc(170px / var(--score-digits, 5)), 34px);
+  }
+  .score-card small {
+    font-size: 10px;
+  }
+  .score-goal-track {
+    margin-top: 3px;
+  }
+  .timer-card {
+    min-width: 90px;
+    padding: 4px 10px 5px;
+  }
+  .timer-card > span {
+    font-size: 9px;
+  }
+  .timer-card strong {
+    font-size: 34px;
+  }
+  .hud-actions .camera-button,
+  .keyboard-help,
+  .boost-card {
+    display: none;
+  }
+  .haul-meter {
+    top: calc(var(--hud-top) + 76px);
+    bottom: auto;
+    width: min(284px, calc(100vw - 48px));
+    grid-template-columns: minmax(0, 1fr) 64px;
+    padding: 10px 12px;
+    gap: 0 10px;
+  }
+  .haul-bonus strong {
+    font-size: 27px;
+  }
+  .tutorial-card {
+    top: calc(var(--hud-top) + 176px);
+    width: 284px;
+    padding: 10px 12px;
+  }
+  .touch-controls > div:last-child {
+    gap: 8px;
+  }
+  .touch-controls button[data-control="drift"] {
+    width: 56px;
+    height: 56px;
+    align-self: flex-end;
+  }
+  .touch-controls button[data-control="hop"] {
+    width: 52px;
+    height: 52px;
+    right: 15px;
+  }
+  .touch-controls button:not(.touch-boost) {
+    border-color: #fff5cf99;
+    background: #182120e6;
+  }
+  .touch-controls button.touch-boost {
+    position: relative;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    gap: 2px;
+  }
+  .touch-boost::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    background: var(--yellow);
+  }
+  .touch-boost > span,
+  .touch-boost > svg:not(.boost-ring) {
+    position: relative;
+  }
+  .touch-controls .touch-boost > svg:not(.boost-ring) {
+    width: 18px;
+    height: 18px;
+  }
+  .touch-controls .touch-boost .boost-ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    fill: none;
+    stroke-width: 5px;
+  }
+  .boost-ring-track {
+    stroke: #fff5cf40;
+  }
+  #touch-boost-fill {
+    stroke: var(--yellow);
+    stroke-dasharray: 100;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.08s linear;
+  }
+  body[data-boosting="true"] #touch-boost-fill {
+    stroke: var(--orange);
+  }
+  .touch-controls button.touch-boost.is-active::before {
+    background: #fff1a1;
+  }
+  .touch-controls button.touch-boost.is-active {
+    box-shadow: 0 0 0 2px var(--paper);
+  }
+}
+@media (max-height: 560px) and (orientation: landscape) and (pointer: coarse) {
+  .hud {
+    --hud-top: max(10px, env(safe-area-inset-top));
+    background: linear-gradient(180deg, #10151570, transparent 110px);
+  }
+  .haul-meter {
+    top: var(--hud-top);
+    width: clamp(220px, calc(100vw - 328px), 284px);
+  }
+  .timer-card {
+    left: auto;
+    right: calc(var(--hud-right) + 56px);
+    transform: skew(-5deg);
+    min-width: 76px;
+    padding-inline: 7px;
+  }
+  .timer-card strong {
+    font-size: 30px;
+  }
+  .score-card {
+    max-width: 115px;
+  }
+  .tutorial-card {
+    top: calc(var(--hud-top) + 100px);
+    width: 240px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .combo-meter i,
+  #touch-boost-fill {
+    transition: none;
+  }
+}
+@media (max-width: 360px) {
+  .score-card strong {
+    font-size: clamp(18px, calc(154px / var(--score-digits, 5)), 30px);
+  }
+}

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Crazy Roomba · Social card source</title>
+    <style>
+      @font-face {
+        font-family: Racing;
+        src: url("/fonts/racing-sans-one-latin.woff2");
+      }
+      @font-face {
+        font-family: Chakra;
+        src: url("/fonts/chakra-petch-600-latin.woff2");
+        font-weight: 600;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #121b27;
+      }
+      canvas {
+        position: absolute;
+        inset: 0;
+      }
+      .shade {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          #101825 5%,
+          #101825f5 30%,
+          #101825d0 46%,
+          #10182520 67%,
+          transparent 90%
+        );
+      }
+      .bottom {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(0deg, #101825e8, transparent 36%);
+      }
+      .stripe {
+        position: absolute;
+        width: 14px;
+        height: 442px;
+        left: 0;
+        top: 65px;
+        background: #ffe32b;
+        box-shadow: 8px 0 #ff773b;
+        transform: skewY(-12deg);
+      }
+      main {
+        position: absolute;
+        left: 64px;
+        top: 84px;
+        color: #fff4d7;
+      }
+      h1 {
+        font:
+          128px/0.86 Racing,
+          sans-serif;
+        margin: 0;
+        letter-spacing: -4px;
+        text-shadow: 4px 6px #101825;
+      }
+      h1 span {
+        display: block;
+        font-size: 150px;
+        color: #ffe32b;
+        text-shadow:
+          5px 7px #c85725,
+          9px 12px #101825;
+      }
+      p {
+        margin: 35px 0 0;
+        font:
+          600 32px/1.12 Chakra,
+          sans-serif;
+      }
+      footer {
+        position: absolute;
+        left: 64px;
+        right: 54px;
+        bottom: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #fff4d7;
+        font:
+          600 24px Chakra,
+          sans-serif;
+      }
+      .play {
+        background: #ffe32b;
+        color: #131b26;
+        padding: 12px 22px;
+        transform: skew(-8deg);
+        box-shadow: 5px 5px #ff773b;
+      }
+      .play span {
+        display: inline-block;
+        transform: skew(8deg);
+      }
+      .url {
+        text-shadow: 1px 2px 3px #101825;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+    <div class="shade"></div>
+    <div class="bottom"></div>
+    <div class="stripe"></div>
+    <main>
+      <h1>CRAZY<span>ROOMBA</span></h1>
+      <p>Small robot.<br />Big trouble.</p>
+    </main>
+    <footer>
+      <div class="play"><span>PLAY IN YOUR BROWSER ↗</span></div>
+      <span class="url">roomba.aparker.io</span>
+    </footer>
+    <script type="module" src="./capture.js"></script>
+  </body>
+</html>

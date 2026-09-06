@@ -1,0 +1,163 @@
+{
+  "version": "arcade-audio-1",
+  "voice": {
+    "id": "IKne3meq5aSn9XLyUdCD",
+    "name": "Charlie",
+    "model": "eleven_v3",
+    "settings": {
+      "stability": 0,
+      "similarity_boost": 0.7,
+      "style": 0.75,
+      "use_speaker_boost": true
+    },
+    "seed": 9097,
+    "cues": [
+      {
+        "id": "full-bin",
+        "text": "Cash it in!",
+        "direction": "excited",
+        "limit": 1.5
+      },
+      {
+        "id": "delivery",
+        "text": "Clean sweep!",
+        "direction": "triumphant",
+        "limit": 1.4
+      },
+      {
+        "id": "combo-two",
+        "text": "Double trouble!",
+        "direction": "raspy shout",
+        "limit": 1.5
+      },
+      {
+        "id": "combo-three",
+        "text": "You're on fire!",
+        "direction": "wildly excited",
+        "limit": 1.7
+      },
+      {
+        "id": "combo-four",
+        "text": "Totally insane!",
+        "direction": "shouting",
+        "limit": 1.6
+      },
+      {
+        "id": "near-miss-a",
+        "text": "Close shave!",
+        "direction": "playful",
+        "limit": 1.4
+      },
+      {
+        "id": "near-miss-b",
+        "text": "Thread the needle!",
+        "direction": "excited",
+        "limit": 1.7
+      },
+      {
+        "id": "stunt-a",
+        "text": "Sick air!",
+        "direction": "raspy shout",
+        "limit": 1.4
+      },
+      {
+        "id": "stunt-b",
+        "text": "Nailed it!",
+        "direction": "triumphant",
+        "limit": 1.3
+      },
+      {
+        "id": "low-time",
+        "text": "Ten seconds! Floor it!",
+        "direction": "urgent, shouting",
+        "limit": 2.0
+      },
+      {
+        "id": "bonus-time",
+        "text": "Bonus time!",
+        "direction": "excited",
+        "limit": 1.4
+      },
+      {
+        "id": "record",
+        "text": "New high score!",
+        "direction": "wildly excited",
+        "limit": 1.6
+      },
+      {
+        "id": "ready-rip",
+        "text": "Let's rip!",
+        "direction": "raspy shout",
+        "limit": 1.42
+      }
+    ]
+  },
+  "effects": [
+    {
+      "id": "pickup",
+      "seconds": 0.5,
+      "prompt": "One tiny cartoon robot vacuum pickup: a quick suction pop followed by a bright arcade coin chirp. Instant attack, compact dry sound, playful and tactile, short decay. One isolated event, no speech, no music, no ambience."
+    },
+    {
+      "id": "deposit",
+      "seconds": 0.9,
+      "prompt": "One rewarding arcade robot docking sound: a satisfying mechanical click and quick cash-register sparkle with a rising electronic flourish. Punchy 1990s game feel, short dry decay, one isolated event. No speech, no music bed, no ambience."
+    },
+    {
+      "id": "bump",
+      "seconds": 0.6,
+      "prompt": "One toy robot vacuum bumps a sofa: a rounded plastic chassis clack with a tiny comic spring rattle. Soft bass thump, tactile and funny, crisp immediate attack and short decay. No painful metallic crash, no glass, no voice, no music, no ambience."
+    },
+    {
+      "id": "boost",
+      "seconds": 0.7,
+      "prompt": "One arcade battery recharge: a quick ascending electric zip ending in a satisfying bright power-up ping. Futuristic toy robot, clean and dry, immediate attack, short decay. No voice, no music, no ambience."
+    },
+    {
+      "id": "turbo",
+      "seconds": 0.8,
+      "prompt": "One tiny robot vacuum turbo ignition: an explosive compact air whoosh with an electric motor spinning rapidly upward. Exaggerated 1990s arcade racing power, punchy dry onset and short cutoff. No continuous engine, no speech, no music, no ambience."
+    },
+    {
+      "id": "hop",
+      "seconds": 0.6,
+      "prompt": "One playful robot spring jump: a short elastic boing and upward air swish, compact and punchy like an arcade stunt. Crisp immediate onset, dry short decay. No voices, no music, no background."
+    },
+    {
+      "id": "land",
+      "seconds": 0.7,
+      "prompt": "One little robot vacuum lands after a jump: a low rubbery chassis thump with a brief plastic rattle and tiny dust puff. Solid satisfying arcade impact, immediate onset, short dry decay. No crash destruction, no speech, no music, no ambience."
+    },
+    {
+      "id": "near-miss",
+      "seconds": 0.5,
+      "prompt": "One fast arcade near-miss: a tight left-to-right air whip with a tiny bright electronic zing. Snappy, quick, playful, immediately audible with a short dry tail. No voice, no music, no ambience."
+    }
+  ],
+  "music": [
+    {
+      "id": "shift-start",
+      "seconds": 3,
+      "kind": "sting",
+      "prompt": "An original three-second instrumental 1990s extreme-sports arcade start sting. Immediate crunchy guitar power chord, punchy breakbeat drum fill, quick rising synth scratch, triumphant tight final hit. Exactly one compact musical gesture with a natural short ending. Upbeat playful swagger, no vocals, no speech, no long intro, no ambience."
+    },
+    {
+      "id": "big-score",
+      "seconds": 3,
+      "kind": "sting",
+      "prompt": "An original three-second instrumental victory sting for a radical 1990s arcade game. Two exuberant ascending distorted guitar power chords, funky bass and a sharp snare fill, ending with one bright cymbal and guitar hit. Fun cocky celebration, punchy rhythmic attack, short clean decay, no vocals, no speech, no orchestral fanfare."
+    },
+    {
+      "id": "shift-end",
+      "seconds": 3,
+      "kind": "sting",
+      "prompt": "An original three-second instrumental end-of-shift arcade sting. A playful turntable stop, descending crunchy guitar riff and a punchy final drum hit. 1990s skate-video attitude, comic rather than sad or frightening, a clear short resolved ending. No vocals, no speech, no long reverb, no orchestral music."
+    },
+    {
+      "id": "dust-fm-overdrive",
+      "seconds": 40,
+      "kind": "bed",
+      "prompt": "An original forty-second instrumental music bed for a funny 1990s extreme-sports arcade racing game starring a robot vacuum. 164 BPM, crunchy punk guitar riffs, syncopated funky bass, punchy breakbeat drums and occasional short turntable scratches. Cocky sunny skate-video energy, catchy rhythmic groove, playful rather than angry. Start the groove immediately, develop two related riff sections, keep space for game sound effects and announcer calls, and finish with a tight musical ending. Consistent energy, no long intro, no big silent breakdown. Absolutely instrumental: no vocals, no chants, no speech, no sampled words."
+    }
+  ]
+}

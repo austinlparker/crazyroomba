@@ -1,0 +1,78 @@
+HISTORICAL SOUNDTRACK — removed from the game September 6, 2026.
+Retained for provenance of earlier promotional exports.
+
+CRAZY ROOMBA / DUST FM
+Soundtrack credits, retrieved 2026-09-05; expanded 2026-09-06
+
+These six retired recordings were published by their creators under CC0 1.0
+Universal. The current generated soundtrack has separate provenance in
+public/music/CREDITS.txt.
+CC0 permits copying, modification and redistribution, including commercial use,
+without royalties or required attribution. We credit the musicians voluntarily.
+License: https://creativecommons.org/publicdomain/zero/1.0/
+Legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+FLESH AND BLOOD — Alex McCulloch (Pro Sensory)
+Source and CC0 declaration: https://opengameart.org/content/punk-hardcore
+Original file: Flesh and Blood_0.mp3
+Download: https://opengameart.org/sites/default/files/Flesh%20and%20Blood_0.mp3
+Bundled file: flesh-and-blood.mp3
+Original SHA-256: 35b17edfd2ce83252e18449f8bf68a2dfad08a410ba9653be46c7c2d431b88da
+Bundled SHA-256: 207aaf7363516c7163b0abf16265dcb353e9f2e124e0a8417a21dcfa1f204285
+
+DOWNTOWN DESTRUCTION — Ragnar Random
+From Rock Music Pack
+Source and CC0 declaration: https://opengameart.org/content/rock-music-pack
+Original file: 07_-_downtown_destruction.ogg
+Download: https://opengameart.org/sites/default/files/07_-_downtown_destruction.ogg
+Bundled file: downtown-destruction.mp3
+Original SHA-256: 810c1c88604e24e3e4e03afb4c8ed80b59505c83fd8fb58c55a7b5f7845f24a7
+Bundled SHA-256: 3b0f6af9094ddd10088712159919bbb91353589a2e7d03cd36ff2ef2f5282585
+
+FINAL HOUR — isaiah658
+Source and CC0 declaration: https://opengameart.org/content/final-hour
+Original file: Final-Hour-isaiah658.ogg
+Download: https://opengameart.org/sites/default/files/Final-Hour-isaiah658.ogg
+Bundled file: final-hour.mp3
+Duration: 136.940 seconds
+Original SHA-256: e44b524d315cc4e7949e93f3f5c68783dcf74a5ecb79acff75111027f14277ac
+Bundled SHA-256: a2e4891bd03fca08c570c4558865d3015c53947e01891839592b7bb530128880
+
+CHEAP SPEED, THINK FAST — Ragnar Random
+Source and CC0 declaration: https://opengameart.org/content/rock-music-pack
+Original file: 29_-_cheap_speed_think_fast.ogg
+Download: https://opengameart.org/sites/default/files/29_-_cheap_speed_think_fast.ogg
+Bundled file: cheap-speed-think-fast.mp3
+Duration: 75.456 seconds
+Original SHA-256: 8c1afef641513d214941d3cc32123a628deb3a0c931642fe8ec83b963752b4be
+Bundled SHA-256: 5602e173210d428d4ebc91ddd79f96e3606ff6485525b7c7f5440d0173ac76db
+
+SHORTCUTS — Zane Little Music
+Source and CC0 declaration: https://opengameart.org/content/shortcuts
+Original file: shortcuts.ogg
+Download: https://opengameart.org/sites/default/files/shortcuts.ogg
+Bundled file: shortcuts.mp3
+Duration: 289.458 seconds
+Original SHA-256: e15b26fa2cd33fb29913bef8fe2acf99388e96420ff660193479220dbe685bd5
+Bundled SHA-256: f169ae2bcf5677dfcdafa2decfbbc881bb93249842d1eee9bb92de2fe3e78a10
+
+ROCK CITY RANSOM — Ragnar Random
+Source and CC0 declaration: https://opengameart.org/content/rock-music-pack
+Original file: 01_-_rock_city_ransom_revised_version.ogg
+Download: https://opengameart.org/sites/default/files/01_-_rock_city_ransom_revised_version.ogg
+Bundled file: rock-city-ransom.mp3
+Duration: 64.014 seconds
+Original SHA-256: 54d7797dfdc8cc53da1c6be894abe5dc0e743c0d2ea78870832413a7a1de3add
+Bundled SHA-256: ab770e1eea69d8f6ded1f05043e076167c33068876a8a2527874bf2489b4fd95
+
+Modifications: loudness matched with FFmpeg's two-pass loudnorm filter targeting
+-18 LUFS / -2 dBTP, then encoded as stereo 44.1 kHz, 128 kbps MP3 for browser
+compatibility and smaller downloads. Artist, title and source metadata added.
+No rearrangement, new performances or endorsement by any artist implied.
+
+Quality check: all six decoded MP3s measure between -18.48 and -18.40 LUFS;
+true peaks remain below -4.4 dBTP. Music streams one selected track on demand.
+The four additions total 9,058,816 bytes; no music is part of the JavaScript bundle.
+
+These credits apply to the six files above, not the repository's legacy music.mid.
+Synthesized announcer cues have separate provenance in ../voice/CREDITS.txt.

@@ -1,0 +1,16 @@
+Crazy Roomba typography
+
+Racing Sans One — Impallari Type / Rodrigo Fuenzalida
+https://fonts.google.com/specimen/Racing+Sans+One
+Google Fonts supplies the uppercase display subset, unchanged:
+https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%20.%2C!%3F%3A%3B%2B-%2F%C3%97%25%E2%88%9E%E2%98%85%E2%86%92%E2%86%90%E2%86%97%E2%80%99
+https://fonts.gstatic.com/l/font?kit=sykr-yRtm7EvTrXNxkv5jfKKyDCwKnrgWpMr9hzySqgjLM8IDIrzPyvlY-fktoJFRnedu7lMvyKa8lSAz24_oGPN_yL7-7roU8qKBRlULNYE-YJBqgqAnznoAciIucE&skey=c54fc5912484ccc5&v=v17
+SIL OFL 1.1; included in Racing-Sans-One-OFL.txt.
+
+Chakra Petch SemiBold — The Chakra Petch Project Authors / Cadson Demak
+https://fonts.google.com/specimen/Chakra+Petch
+Unmodified Google Fonts Latin WOFF2:
+https://fonts.gstatic.com/s/chakrapetch/v13/cIflMapbsEk7TDLdtEz1BwkeQI51R5_F_gUk0w.woff2
+SIL OFL 1.1; included in Chakra-Petch-OFL.txt.
+
+Fonts are self-hosted. Other scripts in profile names use system fallbacks.

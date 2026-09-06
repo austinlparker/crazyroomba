@@ -1,0 +1,33 @@
+CRAZY ROOMBA / ARCADE EFFECTS AND MUSICAL STINGS
+Generated September 6, 2026 from original prompts for this game.
+Provider: ElevenLabs (https://elevenlabs.io/).
+
+Eight incidental effects: pickup, deposit, bump, boost (battery recharge),
+turbo, hop, land and near-miss. Model: eleven_text_to_sound_v2.
+Three instrumental stings: shift-start, big-score and shift-end.
+Model: music_v2, force_instrumental enabled. Each sting lasts three seconds.
+The same recipe generates the 40-second Dust FM: Overdrive music bed;
+see ../music/CREDITS.txt for its details and the separate CC0 soundtrack.
+These generated assets are separate from those CC0 recordings.
+
+Effects have short edge fades, high-pass filtering, compression and two-pass
+normalization targeting -22 LUFS / -8 dBTP. Final format: mono 44.1 kHz /
+96 kbps MP3. All eight total 68,996 bytes; decoded peaks stay at or below
+-7.80 dBTP after MP3 encoding. Runtime gains leave headroom for overlapping
+effects, with per-effect cooldowns and no more than four simultaneous effects.
+
+Stings use short fades, high-pass filtering and two-pass normalization targeting
+-18 LUFS / -4 dBTP. Final format: stereo 44.1 kHz / 128 kbps MP3.
+All three total 146,832 bytes; decoded peaks stay at or below -4.81 dBTP.
+Stings respect the music toggle and volume, lower the radio while playing,
+and lower themselves under speech. Pausing stops all active one-shots.
+
+manifest.json records original prompts, source/final hashes, sizes and measured
+durations, loudness and peaks. scripts/audio/arcade-pack.json is the recipe.
+With Python 3 and FFmpeg installed, rebuild without API requests:
+python3 scripts/audio/generate-arcade-pack.py
+Default source cache: .cache/elevenlabs-announcer/arcade-pack/ (ignored).
+Add --generate only to permit paid requests for missing source files/transcripts.
+Set ELEVENLABS_API_KEY in the environment or the ignored repository .env.
+Keep the cache for repeatable exports; model generation is nondeterministic.
+Only final MP3s and public metadata ship; no API key or client ships to players.

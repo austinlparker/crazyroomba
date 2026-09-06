@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  />
+  <title>Crazy Roomba · Model review</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #263342;
+      color: #f6e4bd;
+      font: 16px system-ui;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #182331;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    button {
+      font: inherit;
+      background: #edc46f;
+      border: 0;
+      padding: 8px 18px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button[aria-pressed="true"] {
+      background: #f28b5e;
+    }
+    #canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    main {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 12px;
+    }
+    article {
+      height: 252px;
+      border: 1px solid #536472;
+      border-radius: 8px;
+      position: relative;
+    }
+    h2 {
+      font-size: 16px;
+      position: absolute;
+      bottom: 8px;
+      left: 16px;
+      margin: 0;
+    }
+    small {
+      margin-left: auto;
+    }
+    @media (max-width: 700px) {
+      main {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      header {
+        flex-wrap: wrap;
+      }
+      small {
+        display: none;
+      }
+    }
+  </style>
+  <canvas id="canvas"></canvas>
+  <header>
+    <button data-group="cast">Cast</button
+    ><button data-group="home">Interiors</button
+    ><button data-group="street">Street</button
+    ><button data-group="moon">Moon</button><button id="rotate">Rotate</button
+    ><small>Development model review · drag to orbit</small>
+  </header>
+  <main></main>
+  <script type="module">
+    import * as T from "three";
+    import {
+      createRobot,
+      createDust,
+      clearModelCache,
+    } from "/src/game/models.ts";
+    import { createResident } from "/src/game/household-models.ts";
+    import {
+      furnitureModel,
+      chargingDock,
+      television,
+      lamp,
+    } from "/src/game/furniture-models.ts";
+    import {
+      vehicleDetails,
+      gardenProp,
+      suburbanHouse,
+    } from "/src/game/stages/suburban-details.ts";
+    import { lunarObject, visitor } from "/src/game/stages/moon-details.ts";
+    import { tree } from "/src/game/stages/common-world.ts";
+    import { level as street } from "/src/game/stages/culdesac-data.ts";
+    import { level as moon } from "/src/game/stages/moon-data.ts";
+    import { disposeScene } from "/src/game/renderer.ts";
+    const renderer = new T.WebGLRenderer({
+      canvas: document.querySelector("canvas"),
+      antialias: true,
+      alpha: true,
+    });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    renderer.toneMapping = T.ACESFilmicToneMapping;
+    let views = [],
+      angle = 0.6,
+      tilt = 0.55,
+      dirty = true,
+      rotate = false;
+    function model(label, build) {
+      const obj = build();
+      const bounds = new T.Box3().setFromObject(obj),
+        size = bounds.getSize(new T.Vector3()),
+        center = bounds.getCenter(new T.Vector3());
+      const wrapper = new T.Group();
+      wrapper.add(obj);
+      obj.position.sub(center);
+      wrapper.scale.setScalar(1.8 / Math.max(size.x, size.y, size.z));
+      const scene = new T.Scene();
+      scene.add(wrapper, new T.HemisphereLight("#fff4dd", "#516883", 2.5));
+      const light = new T.DirectionalLight("#fff2d8", 3);
+      light.position.set(-3, 6, 5);
+      scene.add(light);
+      const camera = new T.PerspectiveCamera(36, 1, 0.01, 30);
+      const el = document.createElement("article");
+      el.innerHTML = "<h2>" + label + "</h2>";
+      document.querySelector("main").append(el);
+      views.push({ label, scene, camera, el, wrapper });
+    }
+    const group = (build) => {
+      const g = new T.Group();
+      build(g);
+      return g;
+    };
+    function show(id) {
+      dirty = true;
+      for (const v of views) disposeScene(v.scene);
+      views = [];
+      clearModelCache();
+      document.querySelector("main").innerHTML = "";
+      document
+        .querySelectorAll("[data-group]")
+        .forEach((b) => b.setAttribute("aria-pressed", b.dataset.group === id));
+      if (id === "cast") {
+        model("Roomba", createRobot);
+        model("Dust bunny", createDust);
+        for (const id of ["miso", "biscuit", "alex"])
+          model(id, () => createResident(id));
+        model("Charging dock", () => group(chargingDock));
+      }
+      if (id === "home") {
+        for (const [kind, w, d, b, t] of [
+          ["sofa", 2, 0.8, 0.17, 0.85],
+          ["bed", 1.65, 2, 0.38, 0.68],
+          ["shelf", 1.2, 0.4, 0, 1.8],
+          ["dresser", 1.2, 0.55, 0, 0.9],
+          ["fridge", 0.7, 0.7, 0, 1.9],
+          ["washer", 0.65, 0.65, 0, 0.9],
+          ["bath", 0.8, 1.55, 0, 0.6],
+          ["sink", 0.75, 0.55, 0, 0.8],
+          ["toilet", 0.45, 0.7, 0, 0.75],
+        ])
+          model(kind, () =>
+            group((g) => furnitureModel(g, kind, w, d, b, t, "#b17e93")),
+          );
+        model("CRT", () => group((g) => television(g, 0, 0, 0)));
+        model("Lamp", () => group((g) => lamp(g, 0, 0, 0)));
+      }
+      if (id === "street") {
+        for (const o of street.FURNITURE.filter(
+          (o) =>
+            ["car", "van", "bin", "grill", "shed"].includes(o.kind) &&
+            o.id !== "bin-b",
+        ))
+          model(o.kind, () =>
+            group((g) =>
+              o.kind === "car" || o.kind === "van"
+                ? vehicleDetails(g, { ...o, x: 0, z: 0 })
+                : gardenProp(g, { ...o, x: 0, z: 0 }),
+            ),
+          );
+        model("Tree", () => group((g) => tree(g, 0, 0)));
+        model("House", () => group((g) => suburbanHouse(g, 0, 0, 1)));
+      }
+      if (id === "moon") {
+        for (const o of moon.FURNITURE.filter(
+          (o) =>
+            o.id !== "crater-b" && o.id !== "crater-c" && o.kind !== "support",
+        ))
+          model(o.kind, () =>
+            group((g) => lunarObject(g, { ...o, x: 0, z: 0, floor: 0 })),
+          );
+        model("Visitor", () => group(visitor));
+      }
+      window.gallery = { views, renderer };
+    }
+    for (const b of document.querySelectorAll("[data-group]"))
+      b.onclick = () => show(b.dataset.group);
+    document.querySelector("#rotate").onclick = (e) => {
+      rotate = !rotate;
+      dirty = true;
+      e.currentTarget.setAttribute("aria-pressed", String(rotate));
+    };
+    window.onresize = window.onscroll = () => {
+      dirty = true;
+    };
+    document.addEventListener("visibilitychange", () => {
+      dirty = true;
+    });
+    let lastX = null,
+      lastY = 0;
+    document.onpointerdown = (e) => {
+      lastX = e.clientX;
+      lastY = e.clientY;
+    };
+    document.onpointerup = () => (lastX = null);
+    document.onpointermove = (e) => {
+      if (lastX !== null) {
+        angle += (e.clientX - lastX) * 0.007;
+        tilt = Math.max(
+          -0.2,
+          Math.min(1.3, tilt + (e.clientY - lastY) * 0.006),
+        );
+        lastY = e.clientY;
+        dirty = true;
+        lastX = e.clientX;
+      }
+    };
+    function frame() {
+      requestAnimationFrame(frame);
+      if (document.hidden || (!dirty && !rotate)) return;
+      dirty = false;
+      const w = innerWidth,
+        h = innerHeight;
+      const c = renderer.domElement,
+        ratio = renderer.getPixelRatio();
+      if (
+        c.width !== Math.floor(w * ratio) ||
+        c.height !== Math.floor(h * ratio)
+      )
+        renderer.setSize(w, h, false);
+      renderer.setScissorTest(false);
+      renderer.setClearColor(0, 0);
+      renderer.clear();
+      renderer.setScissorTest(true);
+      if (rotate) angle += 0.004;
+      for (const v of views) {
+        const r = v.el.getBoundingClientRect();
+        if (r.bottom < 70 || r.top > h) continue;
+        renderer.setViewport(r.left, h - r.bottom + 28, r.width, r.height - 36);
+        renderer.setScissor(
+          r.left,
+          Math.max(0, h - r.bottom),
+          r.width,
+          Math.min(r.height, h - r.top),
+        );
+        v.camera.aspect = r.width / (r.height - 36);
+        v.camera.position.set(
+          Math.sin(angle) * Math.cos(tilt) * 4.1,
+          Math.sin(tilt) * 4.1,
+          Math.cos(angle) * Math.cos(tilt) * 4.1,
+        );
+        v.camera.lookAt(0, 0, 0);
+        v.camera.updateProjectionMatrix();
+        renderer.render(v.scene, v.camera);
+      }
+    }
+    show("cast");
+    frame();
+  </script>
+</html>

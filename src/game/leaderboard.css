@@ -1,0 +1,97 @@
+.board-scopes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 22px;
+}
+.board-scopes button {
+  padding: 12px 5px;
+  min-height: 48px;
+  font-size: clamp(15px, 3.8vw, 20px);
+}
+.board-scopes button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--yellow);
+  box-shadow: 3px 3px 0 var(--orange);
+}
+.board-context,
+.board-message {
+  font-size: 16px;
+  line-height: 1.4;
+}
+.board-context {
+  margin: 18px 0 4px;
+  color: var(--muted);
+}
+.board-message {
+  text-align: center;
+  margin: 18px 0;
+}
+.board-message:empty {
+  display: none;
+}
+.board-actions {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0;
+}
+.board-actions > button {
+  flex: 1;
+  min-height: 44px;
+}
+.board-you {
+  background: #ffdf693b;
+  box-shadow: inset 4px 0 var(--orange);
+}
+.board-you .rank {
+  padding-left: 2px;
+  white-space: nowrap;
+}
+.board-driver {
+  min-width: 0;
+  gap: 9px;
+}
+.board-driver .account-label {
+  flex: 1;
+}
+.you-tag {
+  align-self: center;
+  color: var(--ink);
+  background: var(--yellow);
+  padding: 3px 5px;
+  font-size: 13px;
+  font-weight: 800;
+}
+@media (max-width: 480px) {
+  .board-scopes {
+    grid-template-columns: 0.8fr 1.2fr 1fr;
+  }
+  .board-scopes button {
+    padding-inline: 2px;
+    font-size: 15px;
+    letter-spacing: -0.25px;
+    white-space: nowrap;
+  }
+  .board-row {
+    grid-template-columns: 23px minmax(0, 1fr) auto;
+    gap: 6px;
+  }
+  .board-row strong {
+    font-size: 22px;
+  }
+  .board-driver .account-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 17px;
+  }
+  .board-driver .account-label b {
+    font-size: 15px;
+  }
+  .board-driver .account-label small {
+    font-size: 13px;
+  }
+  .you-tag {
+    font-size: 11px;
+    padding: 3px;
+  }
+}

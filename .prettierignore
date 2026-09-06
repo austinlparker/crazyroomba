@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.wrangler/
+.cache/
+.venv/
+exports/
+test-results/
+playwright-report/
+worker-configuration.d.ts
+docs/HOUSE_FLOORPLAN.svg

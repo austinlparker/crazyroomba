@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": ["@cloudflare/workers-types"],
+    "noUnusedLocals": true
+  },
+  "exclude": ["worker/**/*.test.ts"],
+  "include": ["worker", "worker-configuration.d.ts", "src/game/simulation.ts"]
+}

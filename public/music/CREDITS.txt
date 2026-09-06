@@ -1,0 +1,67 @@
+CRAZY ROOMBA / DUST FM
+Five original instrumental tracks generated with ElevenLabs Music.
+Updated September 6, 2026. Voice and effects have separate credits.
+
+DUST FM: OVERDRIVE — Crazy Roomba
+Generated September 6, 2026 with ElevenLabs Music (music_v2).
+Provider: https://elevenlabs.io/music
+An original instrumental prompted for crunchy punk guitar, funky bass,
+breakbeats and turntable scratches, with playful 1990s arcade/skate-video energy.
+No named artist or existing song was used as a style reference.
+Bundled file: dust-fm-overdrive.mp3
+Duration: 40.000 seconds; size: 641,192 bytes.
+Bundled SHA-256: c13bf70be6c564a7932a76e0dda687cf1be6f2cf47392db76a3bbbb437915756
+Processing: short edge fades, 30 Hz high-pass, two-pass normalization targeting
+-18 LUFS / -4 dBTP. Stereo 44.1 kHz / 128 kbps MP3.
+Decoded loudness: -18.39 LUFS; true peak: -6.70 dBTP.
+Prompt, source hash and final measurements: ../audio/manifest.json.
+Recipe: scripts/audio/arcade-pack.json.
+Rebuild from preserved local sources with Python 3 and FFmpeg:
+python3 scripts/audio/generate-arcade-pack.py
+Add --generate only to permit paid API requests for missing source assets.
+The default ignored cache is .cache/elevenlabs-announcer/arcade-pack/.
+Music streams one selected track on demand; it is outside the startup bundle.
+
+DUST FM RADIO EXPANSION — Crazy Roomba
+Generated September 6, 2026 with ElevenLabs Music (music_v2), using
+force_instrumental=true and original genre/arrangement prompts. No named artist,
+existing song, or vocal sample was supplied.
+Provider: https://elevenlabs.io/music
+
+CURBSIDE RIOT — Skate punk
+Bundled file: curbside-riot.mp3
+Duration: 90.000 seconds; size: 1,441,166 bytes.
+Bundled SHA-256: 817d1c97b51d4aa59cddd99cb4aa8cbf5f99fd5f551f9e6c52129dd5027a716b
+Decoded loudness: -18.36 LUFS; true peak: -7.30 dBTP.
+
+KICKFLIP STATIC — Boom-bap hip-hop
+Bundled file: kickflip-static.mp3
+Duration: 90.000 seconds; size: 1,441,166 bytes.
+Bundled SHA-256: 3eeb4944d1010decf6a17b061198c113e27ef382ef862398f43c06e37f466da2
+Decoded loudness: -18.40 LUFS; true peak: -4.26 dBTP.
+
+GARAGE AFTERBURNER — Alternative rock
+Bundled file: garage-afterburner.mp3
+Duration: 90.000 seconds; size: 1,441,166 bytes.
+Bundled SHA-256: 3f9ed3385cf193cb657b380c92eb1aef3575de1fb14d6b2204220c07293598c5
+Decoded loudness: -18.36 LUFS; true peak: -7.00 dBTP.
+
+BRASS & BURNOUTS — Ska punk
+Bundled file: brass-and-burnouts.mp3
+Duration: 90.000 seconds; size: 1,441,166 bytes.
+Bundled SHA-256: 812ac6a5aa632b39ada0f9ebe5a0feda8818ae8af5346e2944f6846a6632be91
+Decoded loudness: -18.39 LUFS; true peak: -6.51 dBTP.
+
+Processing: 30 Hz high-pass, short edge fades, two-pass normalization targeting
+-18 LUFS / -4 dBTP / 9 LU LRA, stereo 44.1 kHz / 128 kbps MP3. All four
+exports decode to 90 seconds. Independent speech recognition detected no words
+in any exported track; instrumental generation was explicitly enabled.
+Full prompts, source hashes and final measurements: manifest.json.
+Recipe: scripts/audio/radio-tracks.json.
+Rebuild from preserved local sources with Python 3 and FFmpeg:
+python3 scripts/audio/generate-radio-tracks.py
+Add --generate only to permit paid API requests for missing source recordings.
+Default ignored cache: .cache/elevenlabs-announcer/radio-tracks/.
+The four tracks total 5,764,664 bytes. Music streams one selected song at a time;
+these assets are not included in the startup JavaScript bundle. Overdrive remains
+the looping main-menu theme.

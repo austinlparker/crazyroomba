@@ -1,0 +1,58 @@
+.handle-options {
+  margin: -6px 0 16px;
+  max-height: 290px;
+  overflow-y: auto;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+.handle-options[hidden] {
+  display: none;
+}
+.handle-options button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 14px;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid #b9aa8d;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+}
+.handle-options button:last-child {
+  border-bottom: 0;
+}
+.handle-options button:hover,
+.handle-options button[aria-selected="true"] {
+  background: var(--yellow);
+}
+.handle-option-label {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+.handle-option-label strong,
+.handle-option-label > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+.handle-option-label strong {
+  font-size: 18px;
+}
+.handle-option-label > span {
+  font-size: 15px;
+}
+.handle-search-status {
+  margin: -4px 0 14px;
+  font-size: 16px;
+}
+.handle-search-status:empty {
+  display: none;
+}

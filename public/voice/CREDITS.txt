@@ -1,0 +1,45 @@
+CRAZY ROOMBA / ELEVENLABS ANNOUNCER
+Generated September 6, 2026 for this game using original short dialogue.
+
+Provider: ElevenLabs (https://elevenlabs.io/)
+Model: Eleven v3 (eleven_v3)
+Premade voice: Charlie (IKne3meq5aSn9XLyUdCD)
+This pack uses the provider's supplied voice, without custom voice cloning.
+The game soundtrack is also generated with ElevenLabs; see public/music/CREDITS.txt.
+No model weights, API client or credentials are distributed with the game.
+
+Performance direction: exuberant 1990s extreme-sports arcade announcer, with
+raspy shouts, exaggerated emphasis and playful taunting. New dialogue includes
+"Let's get radical!" and "Combo busted!".
+
+Generation settings: stability 0.0 (creative), similarity boost 0.7, style 0.75,
+speaker boost enabled, seed 9096 for the original eight cues and 9097 for the 13 added calls;
+expressive tags vary by cue.
+Source MP3: 44.1 kHz / 128 kbps. Scribe v2 supplies independent word timings;
+expressive tags are removed before verifying the recognized dialogue.
+
+Processing: 95 Hz high-pass, 1.2 dB presence EQ at 2.4 kHz, light compression,
+short edge fades and two-pass normalization targeting -16 LUFS / -2 dBTP.
+Opening phrases are gently time-compressed to fit the 1.5-second READY cue.
+Final format: mono 44.1 kHz / 96 kbps MP3. Decoded final clips measure
+-20.39 to -16.42 LUFS, with true peaks no higher than -2.34 dBTP.
+All 21 clips total 278,648 bytes. Independent transcription of both exported
+cue sequences recognizes all 21 phrases correctly. Added dialogue covers
+combos, near misses, stunts, full bins, time bonuses, records and low time.
+
+With Python 3 and FFmpeg installed, rebuild from cached source files:
+python3 scripts/audio/generate-elevenlabs-announcer.py --cache-dir .cache/elevenlabs-announcer/radical
+python3 scripts/audio/generate-arcade-pack.py
+Run both in this order: the second preserves the original eight entries and adds
+the 13 callouts, eight effects, three stings and new instrumental music bed.
+The second uses .cache/elevenlabs-announcer/arcade-pack/ by default.
+Add --generate to permit paid API requests for missing source files/transcripts.
+Set ELEVENLABS_API_KEY in the environment or the ignored repository .env.
+Retain the cache for repeatable exports; generation itself is nondeterministic.
+
+manifest.json records text, timing, size, loudness, source cut positions and
+SHA-256 hashes. Only final MP3s and public metadata ship to players.
+Clips load when a run starts, respect the sound toggle, duck the music while
+speaking, and stop on pause. All countdown numbers fit their one-second slots.
+Event calls have priorities and shared/per-event cooldowns; countdown and
+urgent calls take precedence. No delayed callout queue builds up during play.

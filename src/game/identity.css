@@ -1,0 +1,97 @@
+.identity-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.identity-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  height: 48px;
+  background: var(--ink);
+  color: var(--yellow);
+  border-radius: 12px;
+  font:
+    800 30px Arial,
+    sans-serif;
+}
+.identity-heading h3 {
+  margin: 0 0 5px;
+  font-size: 21px;
+  line-height: 1.2;
+}
+.identity-heading p,
+.identity-intro,
+.identity-note,
+.identity-optional,
+.account-use,
+.signup-steps {
+  font-size: 15px;
+  line-height: 1.5;
+}
+.identity-heading p {
+  margin: 0;
+  color: #665338;
+}
+.identity-intro {
+  margin: 0 0 20px;
+}
+.identity-note {
+  margin: 0 0 18px;
+  color: #665338;
+  font-size: 14px;
+}
+.identity-panel .wide {
+  margin-top: 10px;
+}
+.identity-continue {
+  font-size: 20px;
+}
+.identity-panel .identity-continue + p {
+  margin-top: 15px;
+}
+.signup-steps {
+  padding-left: 23px;
+  margin: 0 0 18px;
+}
+.signup-steps li + li {
+  margin-top: 12px;
+}
+.account-use {
+  margin-top: 20px;
+  border-block: 1px solid var(--line);
+}
+.account-use summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 12px 0;
+  font-weight: 700;
+}
+.account-use ul {
+  padding-left: 20px;
+  margin: 0 0 12px;
+}
+.account-use li + li {
+  margin-top: 8px;
+}
+.account-use p {
+  margin: 0 0 14px;
+}
+.identity-optional {
+  margin: 14px 0 0;
+  text-align: center;
+  color: #665338;
+  font-size: 13px;
+}
+@media (max-width: 380px) {
+  .identity-heading {
+    gap: 10px;
+  }
+  .identity-heading h3 {
+    font-size: 18px;
+  }
+  .identity-continue {
+    font-size: 17px;
+  }
+}

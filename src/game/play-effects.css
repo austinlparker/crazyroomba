@@ -1,0 +1,66 @@
+/* Loaded on Play with the HUD and announcer, never during stage selection. */
+.countdown {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 8;
+}
+.countdown strong {
+  position: relative;
+  font: 400 clamp(84px, 18vw, 230px)/1 var(--display);
+  color: var(--yellow);
+  -webkit-text-stroke: 2px var(--ink);
+  text-shadow:
+    6px 6px 0 var(--ink),
+    11px 11px 0 var(--orange);
+  transform: rotate(-7deg);
+  animation: countdown-hit 0.3s cubic-bezier(0.18, 0.85, 0.2, 1) both;
+}
+.countdown i {
+  position: absolute;
+  width: 140%;
+  height: 28%;
+  background: repeating-linear-gradient(
+    135deg,
+    #111e 0 26px,
+    #282522e6 26px 52px
+  );
+  transform: rotate(-7deg);
+  border-block: 5px solid var(--orange);
+  animation: countdown-band 0.24s ease-out both;
+}
+.countdown.launch strong {
+  color: #bdf653;
+}
+.countdown.launch i {
+  border-color: #bdf653;
+}
+@keyframes countdown-hit {
+  from {
+    opacity: 0;
+    transform: scale(1.65) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(-7deg);
+  }
+}
+@keyframes countdown-band {
+  from {
+    translate: -30% 0;
+    opacity: 0;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .countdown strong,
+  .countdown i {
+    animation: none;
+  }
+}
