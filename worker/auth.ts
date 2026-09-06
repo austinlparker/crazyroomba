@@ -38,8 +38,12 @@ export function authConfig(url: URL) {
   const audience = `${did}#crazy_roomba`;
   return {
     audience,
+    legacyAudience: did,
     lxm: AUTH_METHOD,
-    scope: `atproto rpc:${AUTH_METHOD}?aud=${encodeURIComponent(audience)}`,
+    // Older PDS getServiceAuth schemas require a bare DID, while their OAuth
+    // scopes require a fragment. A wildcard audience bridges that mismatch;
+    // the method stays exact and verifyServiceProof pins the game audience.
+    scope: `atproto rpc:${AUTH_METHOD}?aud=*`,
   };
 }
 
@@ -108,14 +112,14 @@ export async function verifyServiceProof(
   if (parts.length !== 3) throw new HttpError("Invalid sign-in proof.", 401);
   const header = decodeObject(parts[0]),
     claims = decodeObject(parts[1]);
-  const { audience, lxm } = authConfig(url);
+  const { audience, legacyAudience, lxm } = authConfig(url);
   const seconds = Math.floor(now / 1000);
   if (
     (header.alg !== "ES256" && header.alg !== "ES256K") ||
     header.typ !== "JWT" ||
     header.crit !== undefined ||
     typeof claims.iss !== "string" ||
-    claims.aud !== audience ||
+    (claims.aud !== audience && claims.aud !== legacyAudience) ||
     claims.lxm !== lxm ||
     typeof claims.iat !== "number" ||
     !Number.isInteger(claims.iat) ||

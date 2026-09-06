@@ -13,4 +13,9 @@ export const exchangeAccount = (token: string) =>
 export const endAccount = () =>
   request("/api/session", undefined, { method: "DELETE" });
 export const getAuthConfig = () =>
-  request<{ audience: string; lxm: string; scope: string }>("/api/auth-config");
+  request<{
+    audience: string;
+    legacyAudience?: string;
+    lxm: string;
+    scope: string;
+  }>("/api/auth-config");

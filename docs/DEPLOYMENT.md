@@ -5,15 +5,21 @@ Live: **[roomba.aparker.io](https://roomba.aparker.io/)**. The [Workers address]
 | Resource    | Value                                                                        |
 | ----------- | ---------------------------------------------------------------------------- |
 | Worker      | `crazy-roomba-v2`                                                            |
-| Version     | `fb639d97-33d3-4fe3-b50b-5b30c9eb7736`                                       |
+| Version     | `63122103-2cf4-4360-8a9d-3bb4f284d3b7`                                       |
 | Ruleset     | `2.10.0`                                                                     |
 | Account     | `ap2` · `855b76943db29698ef0d3a42430f2f0b`                                   |
 | D1 database | `crazy-roomba-v2` · `940229fa-5e97-4546-b816-e17471148af3`                   |
 | Migrations  | `0001_leaderboard.sql` and `0002_authenticated_scores.sql`, applied remotely |
 | Domain      | `roomba.aparker.io` · active Cloudflare Custom Domain                        |
-| Deployed    | September 6, deployed at 15:55 UTC / 11:55 EDT                               |
+| Deployed    | September 6, login compatibility fix; verified at 22:50 UTC / 18:50 EDT      |
 
 Wrangler reports a successful deployment of the version above; the live site serves the exact tested build. No migration was needed for 2.10. The existing second migration adds authenticated sessions, proof replay protection and score identity columns; it preserves historical rows. Anonymous scores are excluded from the current board. CI deployment secrets were not configured; the existing GitHub Pages workflow remains a separate static-only build.
+
+## Older PDS login compatibility
+
+The September 6 evening deployment includes the consolidated source cleanup and a fix for login through PDS 0.4.208, reproduced against `rpg.actor`. That PDS rejects service fragments in `getServiceAuth` audiences. The browser now retries its specific audience-validation error once with the game's bare DID; verification accepts only the exact game audiences and login method. The OAuth permission uses a wildcard audience for that single method because the older permission parser drops exact bare-DID scopes. Affected existing accounts need to refresh and reconnect once. [Authentication contract and reproduction](AUTHENTICATED_LEADERBOARD.md).
+
+Validation passed: 477 tests, all four TypeScript configurations, asset integrity, build and startup budgets, Worker dry run, the isolated 90-second API integration, all browser regression suites and all four production stages. Actual old and current AT Protocol permission libraries accept the compatible scope and reject unrelated methods. The reconnect message was visually checked at 390 × 844. Both live origins serve the new metadata and signed-out session response; all 29 deployed HTML, JavaScript and CSS files match the tested build byte for byte. No database migration or production account/score creation was needed. A real affected account must still complete provider consent to confirm its end-to-end login.
 
 ## Custom domain
 
@@ -139,6 +145,6 @@ See [the social leaderboard design](SOCIAL_LEADERBOARDS.md), [the arcade polish 
 
 A complete provider authorization/callback still requires a user account test. Existing grants need one reconnect to authorize the narrow game-specific identity-proof permission. No PDS score writes are requested. Scores currently use D1. Constellation powers reciprocal follow discovery, Slingshot hydrates records, and the public Bluesky AppView supplies outgoing follows, historical gaps and exclusions. No extra OAuth scope is requested. The requested Durable Object migration remains follow-up work.
 
-For future updates, follow the commands in [the README](../README.md#deploy-to-cloudflare). Wrangler authentication must have access to the account recorded in `wrangler.jsonc`. If a local Wrangler asset watcher is disabled, restart the preview after building so new hashed files are available.
+For future updates, follow the commands in [the README](../README.md#deployment). Wrangler authentication must have access to the account recorded in `wrangler.jsonc`. If a local Wrangler asset watcher is disabled, restart the preview after building so new hashed files are available.
 
 The earlier CLI credential-refresh failure was resolved by a new Wrangler login on September 6. The restored login and access to the configured account were verified before the custom-domain deployment. Future commands that may refresh OAuth must run with access to Wrangler's credential directory before attempting the exchange, so refreshed credentials can be saved.

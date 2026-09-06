@@ -1,5 +1,6 @@
 import { getAuthConfig, exchangeAccount, endAccount } from "./identity-api";
 import { accountBadge } from "./account-display";
+import { escapeHtml } from "./html";
 import {
   BrowserOAuthClient,
   type OAuthSession,
@@ -10,6 +11,21 @@ import "./identity.css";
 
 export const ACCOUNT_HINT = "crazy-roomba-account";
 const accountUse = `<details class="account-use"><summary>How we use your account</summary><ul><li><strong>Your public profile</strong> identifies you on Daily leaderboards.</li><li><strong>Your public follows</strong> let you compare scores with people you follow and mutuals.</li></ul><p>Crazy Roomba stores your ranked scores. Unlocks, settings, and local run history stay in this browser.</p><p>Your password stays with your account provider. We don’t post to your account or read your private messages.</p></details>`;
+
+async function serviceAuthError(response: Response) {
+  try {
+    const body: unknown = await response.json();
+    if (body && typeof body === "object") {
+      return {
+        error: "error" in body ? body.error : undefined,
+        message: "message" in body ? body.message : undefined,
+      };
+    }
+  } catch {
+    // Providers can return empty or non-JSON errors.
+  }
+  return { error: undefined, message: undefined };
+}
 
 export class Identity {
   private client: BrowserOAuthClient | null = null;
@@ -130,17 +146,34 @@ export class Identity {
     this.invalidate();
     if (!this.session || !this.config)
       throw new Error("Sign in to post a score.");
-    const params = new URLSearchParams({
-      aud: this.config.audience,
-      lxm: this.config.lxm,
-    });
-    const response = await this.session.fetchHandler(
-      `/xrpc/com.atproto.server.getServiceAuth?${params}`,
-      { signal: AbortSignal.timeout(12000) },
-    );
+    const session = this.session;
+    const { audience, legacyAudience, lxm } = this.config;
+    const signal = AbortSignal.timeout(12000);
+    const requestProof = (aud: string) =>
+      session.fetchHandler(
+        `/xrpc/com.atproto.server.getServiceAuth?${new URLSearchParams({ aud, lxm })}`,
+        { signal },
+      );
+    let response = await requestProof(audience);
+    let failure = response.ok ? null : await serviceAuthError(response);
+    if (
+      response.status === 400 &&
+      failure?.error === "InvalidRequest" &&
+      typeof failure.message === "string" &&
+      /^(?:Error: )?aud must be a valid did\.?$/i.test(failure.message) &&
+      legacyAudience &&
+      audience === `${legacyAudience}#crazy_roomba`
+    ) {
+      // PDS 0.4.208 rejects DID fragments before checking authentication.
+      // Retry only that schema failure, using the advertised exact audience.
+      response = await requestProof(legacyAudience);
+      failure = response.ok ? null : await serviceAuthError(response);
+    }
     if (!response.ok) {
       this.connectionError =
-        response.status === 401 || response.status === 403
+        response.status === 401 ||
+        response.status === 403 ||
+        failure?.error === "ScopeMissingError"
           ? "Reconnect your account to post scores."
           : "Account verification unavailable. Try again.";
       this.onChange();
@@ -150,7 +183,7 @@ export class Identity {
     if (typeof token !== "string")
       throw new Error("Your provider did not return an identity proof.");
     const { profile } = await exchangeAccount(token);
-    if (profile.did !== this.session.sub)
+    if (profile.did !== session.sub || this.session !== session)
       throw new Error("The connected account changed. Sign in again.");
     this.profile = profile;
     this.verified = true;
@@ -168,7 +201,7 @@ export class Identity {
     return {
       title: profile ? "YOUR ACCOUNT" : "SIGN IN",
       body: profile
-        ? `<div class="account-summary account-card">${accountBadge(profile)}</div>${this.verified ? "" : '<button class="primary wide" data-action="reconnect">RECONNECT</button>'}<button class="secondary wide" data-action="logout">Sign out</button>${accountUse}`
+        ? `<div class="account-summary account-card">${accountBadge(profile)}</div>${this.verified ? "" : `${this.connectionError ? `<p class="identity-note" role="status">${escapeHtml(this.connectionError)}</p>` : ""}<button class="primary wide" data-action="reconnect">RECONNECT</button>`}<button class="secondary wide" data-action="logout">Sign out</button>${accountUse}`
         : `<div class="identity-panel"><div class="identity-heading"><span class="identity-mark" aria-hidden="true">@</span><div><h3>Sign in with AT Protocol</h3><p>Your Bluesky account works here, too.</p></div></div><p class="identity-intro">Post Daily scores and compare with friends.</p><label class="field-label" for="handle">Your handle</label><input id="handle" aria-describedby="handle-help" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="253" placeholder="you.bsky.social"/><p class="identity-note" id="handle-help">Use your full handle, such as you.bsky.social or your own domain. You’ll sign in with your account provider.</p><button class="primary wide" data-action="login">SIGN IN ↗</button><button class="secondary wide" data-action="signup-info">New here? Sign up</button>${accountUse}<p class="identity-optional">Just want to play? No account needed.</p></div>`,
     };
   }

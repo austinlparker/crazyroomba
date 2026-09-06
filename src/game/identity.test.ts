@@ -28,9 +28,9 @@ const profile = {
 };
 const config = {
   audience: "did:web:game.test#crazy_roomba",
+  legacyAudience: "did:web:game.test",
   lxm: "io.github.austinlparker.crazyroombaLogin",
-  scope:
-    "atproto rpc:io.github.austinlparker.crazyroombaLogin?aud=did%3Aweb%3Agame.test%23crazy_roomba",
+  scope: "atproto rpc:io.github.austinlparker.crazyroombaLogin?aud=*",
 };
 let store: Map<string, string>;
 beforeEach(() => {
@@ -109,7 +109,101 @@ describe("verified game identity", () => {
       `/xrpc/com.atproto.server.getServiceAuth?${new URLSearchParams({ aud: config.audience, lxm: config.lxm })}`,
     );
     expect(mocks.exchange).toHaveBeenCalledWith("signed-game-proof");
+    expect(mocks.proof).toHaveBeenCalledOnce();
     expect(store.get(ACCOUNT_HINT)).toBe("1");
+  });
+  it("retries the old PDS audience-schema rejection with the exact bare game DID", async () => {
+    mocks.proof.mockResolvedValueOnce(
+      Response.json(
+        { error: "InvalidRequest", message: "Error: aud must be a valid did" },
+        { status: 400 },
+      ),
+    );
+    const identity = new Identity();
+    await identity.init();
+    expect(identity.verified).toBe(true);
+    expect(mocks.proof).toHaveBeenCalledTimes(2);
+    const [modern, legacy] = mocks.proof.mock.calls;
+    expect(legacy[0]).toBe(
+      `/xrpc/com.atproto.server.getServiceAuth?${new URLSearchParams({ aud: config.legacyAudience, lxm: config.lxm })}`,
+    );
+    expect(legacy[1].signal).toBe(modern[1].signal);
+    expect(mocks.exchange).toHaveBeenCalledOnce();
+  });
+  it("asks an old grant to reconnect when the legacy audience permission is missing", async () => {
+    mocks.proof
+      .mockResolvedValueOnce(
+        Response.json(
+          {
+            error: "InvalidRequest",
+            message: "Error: aud must be a valid did",
+          },
+          { status: 400 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        Response.json({ error: "ScopeMissingError" }, { status: 400 }),
+      );
+    const identity = new Identity();
+    await identity.init();
+    expect(identity.verified).toBe(false);
+    expect(identity.profile).toEqual(profile);
+    expect(identity.connectionError).toMatch(/Reconnect/);
+    expect(identity.panel().body).toContain(identity.connectionError);
+    expect(mocks.exchange).not.toHaveBeenCalled();
+    await identity.login(profile.handle);
+    expect(mocks.redirect).toHaveBeenCalledWith(profile.handle, {
+      scope: config.scope,
+    });
+  });
+  it.each([
+    [400, { error: "InvalidRequest", message: "Invalid lxm" }],
+    [400, { error: "ScopeMissingError" }],
+    [401, { error: "AuthMissing" }],
+    [403, { error: "Forbidden" }],
+    [
+      500,
+      { error: "InvalidRequest", message: "Error: aud must be a valid did" },
+    ],
+    [400, null],
+  ])(
+    "does not retry an unrelated provider failure: %s %j",
+    async (status, body) => {
+      mocks.proof.mockResolvedValue(Response.json(body, { status }));
+      const identity = new Identity();
+      await identity.init();
+      expect(identity.verified).toBe(false);
+      expect(mocks.proof).toHaveBeenCalledOnce();
+      expect(mocks.exchange).not.toHaveBeenCalled();
+    },
+  );
+  it.each([undefined, "did:web:another.test"])(
+    "does not invent or broaden an unsupported legacy audience: %s",
+    async (legacyAudience) => {
+      mocks.config.mockResolvedValue({ ...config, legacyAudience });
+      mocks.proof.mockResolvedValue(
+        Response.json(
+          {
+            error: "InvalidRequest",
+            message: "Error: aud must be a valid did",
+          },
+          { status: 400 },
+        ),
+      );
+      const identity = new Identity();
+      await identity.init();
+      expect(identity.verified).toBe(false);
+      expect(mocks.proof).toHaveBeenCalledOnce();
+      expect(mocks.exchange).not.toHaveBeenCalled();
+    },
+  );
+  it("escapes connection errors in the account panel", async () => {
+    const identity = new Identity();
+    await identity.init();
+    identity.invalidate();
+    identity.connectionError = '<img src=x onerror="alert(1)">';
+    expect(identity.panel().body).toContain("&lt;img");
+    expect(identity.panel().body).not.toContain("<img src=x");
   });
   it("keeps the avatar visible when an old OAuth grant needs reconnecting", async () => {
     mocks.proof.mockImplementation(

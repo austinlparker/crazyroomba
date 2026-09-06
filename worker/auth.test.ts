@@ -48,7 +48,7 @@ function testEnv(): Env {
 const origin = "https://crazy-roomba-v2.austin-855.workers.dev";
 const did = "did:plc:aaaaaaaaaaaaaaaaaaaaaaaa";
 const otherDid = "did:plc:bbbbbbbbbbbbbbbbbbbbbbbb";
-const { audience } = authConfig(new URL(origin));
+const { audience, legacyAudience } = authConfig(new URL(origin));
 const now = Date.parse("2026-09-05T12:00:00Z");
 
 // Execute the actual migrations and SQL using SQLite; only the D1 transport is adapted.
@@ -287,8 +287,30 @@ describe("PDS service proof verification", () => {
       "https://player.example.com/.well-known/did.json",
     );
   });
+  it.each(["ES256", "ES256K"])(
+    "verifies legacy bare-DID proofs with %s signatures",
+    async (algorithm) => {
+      const pair = algorithm === "ES256" ? await P256Keypair.create() : key;
+      documents[did] = document(did, pair);
+      expect(
+        (
+          await verifyServiceProof(
+            await proof({ aud: legacyAudience }, {}, pair),
+            new URL(origin),
+            now,
+          )
+        ).did,
+      ).toBe(did);
+    },
+  );
   it.each([
     { aud: "did:web:other.example.com#crazy_roomba" },
+    { aud: "did:web:other.example.com" },
+    { aud: `${legacyAudience}#another_service` },
+    { aud: `${legacyAudience}#` },
+    { aud: `${legacyAudience}%23crazy_roomba` },
+    { aud: legacyAudience, lxm: "app.bsky.feed.post" },
+    { aud: legacyAudience, exp: now / 1000 + 121 },
     { lxm: "app.bsky.feed.post" },
     { exp: now / 1000 },
     { exp: now / 1000 + 121 },
@@ -406,7 +428,11 @@ describe("authenticated leaderboard", () => {
     const metadata = await (await call("/client-metadata.json")).json();
     const service = await (await call("/.well-known/did.json")).json();
     expect(config.scope).toBe(metadata.scope);
-    expect(config.scope).not.toContain("repo:");
+    expect(config.legacyAudience).toBe(service.id);
+    expect(config.scope.split(" ")).toEqual([
+      "atproto",
+      `rpc:${AUTH_METHOD}?aud=*`,
+    ]);
     expect(service.service[0].id).toBe(config.audience);
   });
   it("supports custom-domain OAuth without accepting proofs for the old hostname", async () => {
@@ -520,6 +546,23 @@ describe("authenticated leaderboard", () => {
     ]);
     expect(
       db.sqlite.prepare("SELECT count(*) AS n FROM auth_sessions").get()!.n,
+    ).toBe(1);
+  });
+  it("shares nonce replay protection across modern and legacy audiences", async () => {
+    const jti = crypto.randomUUID();
+    for (const [aud, expectedStatus] of [
+      [legacyAudience, 200],
+      [audience, 401],
+    ] as const) {
+      const response = await call("/api/session", {
+        data: {},
+        authorization: `Bearer ${await proof({ aud, jti })}`,
+      });
+      expect(response.status).toBe(expectedStatus);
+    }
+    expect(
+      db.sqlite.prepare("SELECT COUNT(*) AS count FROM auth_sessions").get()
+        ?.count,
     ).toBe(1);
   });
   it("requires same origin for sign-in, score changes, and logout", async () => {
